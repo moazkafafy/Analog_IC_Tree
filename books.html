@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Analog IC Design — Books Library</title>
+<style>
+  :root {
+    --red-deep:   #7A0000;
+    --red-main:   #9B1C1C;
+    --red-bright: #C0392B;
+    --gold:       #B8860B;
+    --gold-light: #D4A017;
+    --white:      #FFFFFF;
+    --off-white:  #FDF8F8;
+    --warm-bg:    #F8F0F0;
+    --text-dark:  #1A1A1A;
+    --text-mid:   #4A4A4A;
+    --text-muted: #8A7070;
+    --border:     #E8D8D8;
+    --shadow:     rgba(122,0,0,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Georgia', serif; background: var(--white); color: var(--text-dark); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--red-deep);
+    padding: 28px 40px 24px;
+    position: relative; overflow: hidden;
+  }
+  header::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(90deg, transparent 0, transparent 38px, rgba(255,255,255,0.03) 38px, rgba(255,255,255,0.03) 40px),
+      repeating-linear-gradient(0deg,  transparent 0, transparent 38px, rgba(255,255,255,0.03) 38px, rgba(255,255,255,0.03) 40px);
+    pointer-events: none;
+  }
+  .header-inner { position: relative; max-width: 1000px; margin: 0 auto; }
+  header h1 { font-family: 'Courier New', monospace; font-size: clamp(1.3rem, 2.5vw, 1.85rem); font-weight: 700; color: #fff; letter-spacing: 0.04em; }
+  header h1 span { color: var(--gold-light); }
+  header p { margin-top: 4px; font-size: 0.78rem; color: rgba(255,255,255,0.48); font-family: 'Courier New', monospace; letter-spacing: 0.06em; }
+  .nav-links { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+  .nav-link { font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; color: rgba(255,255,255,0.7); text-decoration: none; padding: 6px 12px; border-radius: 3px; border: 1.5px solid rgba(255,255,255,0.2); transition: all 0.15s; }
+  .nav-link:hover { color: #fff; border-color: var(--gold-light); background: rgba(255,255,255,0.08); }
+  .nav-link.active { background: var(--gold-light); color: var(--red-deep); border-color: var(--gold-light); }
+
+  /* ── TAB SELECTOR ── */
+  .tabs-bar {
+    background: var(--warm-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .tabs-container { display: flex; gap: 0; }
+  .tab-btn {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.18s;
+  }
+  .tab-btn:hover { color: var(--red-main); }
+  .tab-btn.active { color: var(--red-deep); border-bottom-color: var(--red-deep); }
+  .tab-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+  .tab-btn.disabled::after { content: ' (coming soon)'; font-size: 0.6rem; color: var(--gold); }
+
+  /* ── MAIN ── */
+  main { max-width: 1000px; margin: 0 auto; padding: 32px 24px 80px; }
+  .search-wrap { margin-bottom: 24px; position: relative; }
+  #book-search {
+    width: 100%; padding: 10px 16px 10px 40px;
+    font-family: 'Courier New', monospace; font-size: 0.82rem;
+    background: var(--off-white); border: 1.5px solid var(--border);
+    border-radius: 4px; color: var(--text-dark); outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  #book-search:focus { border-color: var(--red-main); box-shadow: 0 0 0 3px rgba(155,28,28,0.15); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
+
+  /* ── SKILL LEVEL SECTION ── */
+  .skill-level-section {
+    margin-bottom: 32px;
+  }
+  .skill-level-header {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--red-deep);
+    padding: 8px 0 8px 2px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--red-deep);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .skill-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .skill-beginner { background: rgba(29,106,64,0.1); color: #1D6A40; border: 1px solid rgba(29,106,64,0.25); }
+  .skill-intermediate { background: rgba(184,134,11,0.1); color: var(--gold); border: 1px solid rgba(184,134,11,0.25); }
+  .skill-advanced { background: rgba(155,28,28,0.1); color: var(--red-main); border: 1px solid rgba(155,28,28,0.25); }
+
+  /* ── BOOK CARD ── */
+  .books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .book-card {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    transition: all 0.15s;
+    cursor: pointer;
+    display: flex; flex-direction: column;
+  }
+  .book-card:hover { border-color: var(--red-main); box-shadow: 0 4px 12px var(--shadow); }
+  .book-title { font-family: 'Courier New', monospace; font-size: 0.88rem; font-weight: 700; color: var(--red-main); margin-bottom: 4px; }
+  .book-author { font-size: 0.75rem; color: var(--text-mid); margin-bottom: 2px; }
+  .book-year { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; }
+  .book-description { font-size: 0.77rem; color: var(--text-mid); line-height: 1.5; margin-bottom: 10px; flex: 1; }
+  .book-footer { display: flex; gap: 6px; flex-wrap: wrap; }
+  .book-skill { font-family: 'Courier New', monospace; font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 2px; }
+  .book-link { font-family: 'Courier New', monospace; font-size: 0.7rem; padding: 4px 8px; border-radius: 2px; background: rgba(155,28,28,0.08); color: var(--red-main); text-decoration: none; border: 1px solid rgba(155,28,28,0.2); cursor: pointer; transition: all 0.15s; }
+  .book-link:hover { background: rgba(155,28,28,0.12); border-color: var(--red-main); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-family: 'Courier New', monospace; }
+  .empty-state p { font-size: 0.9rem; }
+
+  /* ── FOOTER ── */
+  footer { text-align: center; padding: 18px; font-family: 'Courier New', monospace; font-size: 0.65rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+  footer a { color: var(--red-main); text-decoration: none; }
+
+  /* ── TAB CONTENT ── */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>Analog IC Design — <span>Books Library</span></h1>
+    <p>// Curated readings from beginner to advanced</p>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link">← Knowledge Tree</a>
+      <a href="#" class="nav-link active">Books</a>
+    </nav>
+  </div>
+</header>
+
+<div class="tabs-bar">
+  <div class="tabs-container">
+    <button class="tab-btn active" data-tab="basics">📚 Basics</button>
+    <button class="tab-btn disabled" data-tab="specialized">⚡ Specialized</button>
+  </div>
+</div>
+
+<main>
+  <!-- BASICS TAB -->
+  <div id="basics" class="tab-content active">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="book-search" placeholder="Search books by title or author..." autocomplete="off" />
+    </div>
+
+    <!-- BEGINNER SECTION -->
+    <div class="skill-level-section">
+      <div class="skill-level-header">
+        🟢 Beginner Books
+        <span class="skill-badge skill-beginner">START HERE</span>
+      </div>
+      <div class="books-grid" id="beginner-books">
+        <!-- Books will be populated here -->
+      </div>
+    </div>
+
+    <!-- INTERMEDIATE SECTION -->
+    <div class="skill-level-section">
+      <div class="skill-level-header">
+        🟡 Intermediate Books
+        <span class="skill-badge skill-intermediate">DEEPEN</span>
+      </div>
+      <div class="books-grid" id="intermediate-books">
+        <!-- Books will be populated here -->
+      </div>
+    </div>
+
+    <!-- ADVANCED SECTION -->
+    <div class="skill-level-section">
+      <div class="skill-level-header">
+        🔴 Advanced Books
+        <span class="skill-badge skill-advanced">MASTER</span>
+      </div>
+      <div class="books-grid" id="advanced-books">
+        <!-- Books will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SPECIALIZED TAB (COMING SOON) -->
+  <div id="specialized" class="tab-content">
+    <div class="empty-state">
+      <p>Specialized books (PLL, Data Converters, RF, etc.) coming soon!</p>
+      <p style="margin-top: 12px; font-size: 0.8rem; color: var(--text-mid);">These will be organized by topic and linked with Advanced courses.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Manage books: Add/edit in the <code>BOOKS</code> array in the source code · Share: <a href="index.html">Back to Knowledge Tree</a>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  BOOKS DATA
+// ═══════════════════════════════════════════════════════════════
+const BOOKS = {
+  basics: [
+    // BEGINNER
+    {
+      level: 'beginner',
+      title: 'CMOS Analog Circuit Design',
+      author: 'Phillip E. Allen, Douglas R. Holberg',
+      year: 2002,
+      description: 'The classic textbook for analog IC design fundamentals. Covers MOS transistors, basic amplifiers, frequency response, and feedback with clear explanations.',
+      link: null,
+    },
+    {
+      level: 'beginner',
+      title: 'Design of Analog CMOS Integrated Circuits',
+      author: 'Behzad Razavi',
+      year: 2001,
+      description: 'Comprehensive introduction with focus on design methodology. Excellent for building intuition about transistor-level design and trade-offs.',
+      link: null,
+    },
+    // INTERMEDIATE
+    {
+      level: 'intermediate',
+      title: 'Analog Integrated Circuit Design',
+      author: 'Tony Chan Carusone, David A. Johns, Kenneth W. Martin',
+      year: 2011,
+      description: 'Modern treatment of analog IC design with emphasis on frequency response, noise, and practical design considerations. Strong on feedback and compensation.',
+      link: null,
+    },
+    {
+      level: 'intermediate',
+      title: 'CMOS Circuit Design, Layout, and Simulation',
+      author: 'R. Jacob Baker',
+      year: 2010,
+      description: 'Bridges theory and practice with detailed layout considerations. Great for understanding parasitics and real-world design challenges.',
+      link: null,
+    },
+    // ADVANCED
+    {
+      level: 'advanced',
+      title: 'Design of High-Performance Analog Circuits',
+      author: 'Razavi B.',
+      year: 2013,
+      description: 'Advanced topics including high-speed amplifiers, noise optimization, and complex frequency compensation. Assumes strong fundamentals.',
+      link: null,
+    },
+    {
+      level: 'advanced',
+      title: 'Analog Circuit Design: Low-Noise Low-Power Low-Voltage',
+      author: 'Johan Huijsing',
+      year: 2011,
+      description: 'Focuses on modern design challenges: power efficiency, noise minimization, and low-voltage operation. Perfect for IoT and battery-powered applications.',
+      link: null,
+    },
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════════════
+function renderBooks(level, container) {
+  const books = BOOKS.basics.filter(b => b.level === level);
+  const grid = document.getElementById(container);
+  
+  if (!books.length) {
+    grid.innerHTML = '<div class="empty-state"><p>No books yet. Check back soon!</p></div>';
+    return;
+  }
+
+  grid.innerHTML = books.map(book => `
+    <div class="book-card">
+      <div class="book-title">${book.title}</div>
+      <div class="book-author">by ${book.author}</div>
+      <div class="book-year">${book.year}</div>
+      <div class="book-description">${book.description}</div>
+      <div class="book-footer">
+        <span class="book-skill skill-${book.level}">${book.level.toUpperCase()}</span>
+        ${book.link ? `<a href="${book.link}" class="book-link" target="_blank" rel="noopener">Learn More →</a>` : '<span style="font-size:0.7rem;color:var(--text-muted);">Link coming soon</span>'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function searchBooks(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.book-card').forEach(card => {
+    const title = card.querySelector('.book-title').textContent.toLowerCase();
+    const author = card.querySelector('.book-author').textContent.toLowerCase();
+    const match = title.includes(q) || author.includes(q);
+    card.style.display = match ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB SWITCHING
+// ═══════════════════════════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.classList.contains('disabled')) return;
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(tab).classList.add('active');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('book-search').addEventListener('input', (e) => {
+  searchBooks(e.target.value.trim());
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+renderBooks('beginner', 'beginner-books');
+renderBooks('intermediate', 'intermediate-books');
+renderBooks('advanced', 'advanced-books');
+</script>
+</body>
+</html>
