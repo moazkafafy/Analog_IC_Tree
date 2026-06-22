@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Analog IC Design — Knowledge Tree</title>
+<style>
+  :root {
+    --red-deep:   #7A0000;
+    --red-main:   #9B1C1C;
+    --red-bright: #C0392B;
+    --red-glow:   rgba(155,28,28,0.15);
+    --gold:       #B8860B;
+    --gold-light: #D4A017;
+    --white:      #FFFFFF;
+    --off-white:  #FDF8F8;
+    --warm-bg:    #F8F0F0;
+    --text-dark:  #1A1A1A;
+    --text-mid:   #4A4A4A;
+    --text-muted: #8A7070;
+    --border:     #E8D8D8;
+    --shadow:     rgba(122,0,0,0.12);
+    --pending:    #C17F24;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--white);
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--red-deep);
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(90deg, transparent 0px, transparent 38px, rgba(255,255,255,0.03) 38px, rgba(255,255,255,0.03) 40px),
+      repeating-linear-gradient(0deg,  transparent 0px, transparent 38px, rgba(255,255,255,0.03) 38px, rgba(255,255,255,0.03) 40px);
+    pointer-events: none;
+  }
+  .header-inner { position: relative; max-width: 940px; margin: 0 auto; }
+  header h1 {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.04em;
+  }
+  header h1 span { color: var(--gold-light); }
+  header p {
+    margin-top: 6px;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.06em;
+  }
+  .header-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .hbadge {
+    display: inline-block;
+    background: rgba(184,134,11,0.15);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-family: 'Courier New', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+
+  /* ── INFOBAR ── */
+  .infobar {
+    background: var(--warm-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 9px 40px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+  }
+  .infobar span::before { content: '▶ '; color: var(--red-main); }
+  .pending-note {
+    margin-left: auto;
+    color: var(--pending);
+    font-size: 0.67rem;
+    border: 1px solid rgba(193,127,36,0.35);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+  .pending-note::before { content: '⚠ ' !important; color: var(--pending) !important; }
+
+  /* ── MAIN ── */
+  main { max-width: 940px; margin: 0 auto; padding: 36px 24px 80px; }
+
+  /* ── SEARCH ── */
+  .search-wrap { margin-bottom: 28px; position: relative; }
+  #tree-search {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  #tree-search:focus { border-color: var(--red-main); box-shadow: 0 0 0 3px var(--red-glow); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
+
+  /* ── TREE ── */
+  .tree { list-style: none; }
+  .tree-node { position: relative; }
+
+  .tree-node > .children-wrap {
+    position: relative;
+    padding-left: 28px;
+  }
+  .tree-node > .children-wrap::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 0; bottom: 12px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--red-main), transparent);
+    border-radius: 1px;
+  }
+  .children-wrap > .tree-node > .node-row::before {
+    content: '';
+    position: absolute;
+    left: -18px; top: 50%;
+    width: 18px; height: 2px;
+    background: var(--red-main);
+    transform: translateY(-50%);
+    opacity: 0.55;
+  }
+
+  /* ── NODE ROW ── */
+  .node-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 9px 14px 9px 12px;
+    margin: 4px 0;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
+    user-select: none;
+  }
+  .node-row:hover { background: var(--warm-bg); border-color: var(--border); box-shadow: 0 2px 8px var(--shadow); }
+  .node-row.open { background: var(--off-white); border-color: var(--red-main); box-shadow: 0 2px 12px var(--red-glow); }
+
+  .depth-0 > .node-row { padding: 12px 16px; }
+
+  /* ── TOGGLE ── */
+  .toggle-icon {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--red-deep);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.18s;
+  }
+  .toggle-icon svg { width: 10px; height: 10px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; transition: transform 0.22s; }
+  .node-row.open .toggle-icon { background: var(--red-bright); }
+  .node-row.open .toggle-icon svg { transform: rotate(90deg); }
+  .leaf .toggle-icon { background: transparent; border: 1.5px solid var(--border); }
+  .leaf .toggle-icon svg { stroke: var(--text-muted); }
+
+  /* ── LABEL ── */
+  .node-label { flex: 1; font-family: 'Courier New', monospace; line-height: 1.35; }
+  .node-title { display: block; font-size: 0.88rem; font-weight: 700; color: var(--text-dark); }
+  .depth-0 > .node-row .node-title { font-size: 1rem; color: var(--red-deep); }
+  .node-sub { display: block; font-size: 0.7rem; color: var(--text-muted); margin-top: 1px; }
+
+  /* ── BADGES ── */
+  .badges { display: flex; gap: 5px; flex-wrap: wrap; flex-shrink: 0; }
+  .badge {
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    display: inline-flex; align-items: center; gap: 3px;
+    transition: opacity 0.15s;
+  }
+  .badge:hover { opacity: 0.78; }
+  .badge-video  { background: rgba(155,28,28,0.1);  color: var(--red-main); border: 1px solid rgba(155,28,28,0.3); }
+  .badge-slides { background: rgba(184,134,11,0.1); color: var(--gold);     border: 1px solid rgba(184,134,11,0.3); }
+  .badge-lab    { background: rgba(26,26,26,0.07);  color: var(--text-mid); border: 1px solid var(--border); }
+  .badge-mooc   { background: rgba(39,109,110,0.08); color: #276D6E;        border: 1px solid rgba(39,109,110,0.25); }
+  /* pending badge — shown when href is null/empty */
+  .badge-pending {
+    background: rgba(193,127,36,0.08);
+    color: var(--pending);
+    border: 1px solid rgba(193,127,36,0.3);
+    cursor: default;
+  }
+
+  /* ── COLLAPSE ── */
+  .children-wrap { overflow: hidden; max-height: 0; transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1); }
+  .children-wrap.open { max-height: 3000px; }
+
+  /* ── DETAIL PANEL ── */
+  .node-detail {
+    margin: 2px 0 6px 0;
+    padding: 10px 14px;
+    background: var(--warm-bg);
+    border-left: 3px solid var(--red-main);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.78rem;
+    color: var(--text-mid);
+    font-family: 'Courier New', monospace;
+    line-height: 1.55;
+    display: none;
+  }
+  .node-detail.visible { display: block; }
+  .node-detail .topics { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .topic-tag {
+    background: rgba(155,28,28,0.08);
+    border: 1px solid rgba(155,28,28,0.2);
+    color: var(--red-main);
+    font-size: 0.65rem;
+    padding: 2px 8px; border-radius: 2px; font-weight: 600; letter-spacing: 0.04em;
+  }
+
+  /* ── FOOTER ── */
+  footer { text-align: center; padding: 20px; font-family: 'Courier New', monospace; font-size: 0.67rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+  footer a { color: var(--red-main); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer code { background: var(--warm-bg); padding: 1px 4px; border-radius: 2px; font-size: 0.65rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>Analog IC Design — <span>Knowledge Tree</span></h1>
+    <p>// Master Micro · Dr. Hesham Omran · Interactive Study Map</p>
+    <div class="header-badges">
+      <span class="hbadge">23 LECTURES</span>
+      <span class="hbadge">11 LABS</span>
+      <span class="hbadge">2 MINI PROJECTS</span>
+      <span class="hbadge">FREE RESOURCES</span>
+    </div>
+  </div>
+</header>
+
+<div class="infobar">
+  <span>Click any node to expand</span>
+  <span>Click again to collapse</span>
+  <span>Badges open resources directly</span>
+  <span class="pending-note">Badges marked ⚠ need their link added</span>
+</div>
+
+<main>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="tree-search" placeholder="Search lectures, topics, labs..." autocomplete="off" />
+  </div>
+  <ul class="tree" id="tree-root"></ul>
+</main>
+
+<footer>
+  Source: <a href="https://www.master-micro.com/professional-courses/analog-ic-design" target="_blank">master-micro.com</a>
+  &nbsp;·&nbsp;
+  To add a link: find <code>href: null</code> in <code>TREE_DATA</code> and replace with the URL string.
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  HOW TO UPDATE THIS FILE
+//  ─────────────────────────────────────────────────────────────
+//  1. Each lecture/lab node has a `resources` array.
+//  2. Set href: null  →  shows a ⚠ pending badge (not clickable)
+//  3. Set href: "https://..."  →  shows a clickable badge
+//
+//  LAB PDFs: open https://drive.google.com/drive/folders/1bVQrHuBM_Zyx9GM0jdYwGqFmFIBjb9Fk
+//            right-click each PDF → "Get link" → paste as href below.
+//
+//  LECTURE VIDEOS: open https://www.youtube.com/playlist?list=PLMSBalys69yzp1vrmnYAmpRFiptbuGuaj
+//                  click each video → copy URL → paste as href below.
+//                  (Part 2 playlist: PLMSBalys69yxQrKE_46AYuFkthIBh-WVJ)
+// ═══════════════════════════════════════════════════════════════
+
+const SLIDES_FOLDER  = 'https://drive.google.com/drive/folders/1OWcbg8f48_ilr8jptdFEA3nbNeQyD0Hi';
+const LABS_FOLDER_C  = 'https://drive.google.com/drive/folders/1bVQrHuBM_Zyx9GM0jdYwGqFmFIBjb9Fk';
+const LABS_FOLDER_X  = 'https://drive.google.com/open?id=1UBvVOz9tSnk1s0O4Efii5mqrEIBP3fwQ&usp=drive_fs';
+const LABS_FOLDER_M  = 'https://drive.google.com/drive/folders/1xcmntHz9nx2GhkSNoL6JGUJsCkXj6oX5';
+const MOOC_PT1       = 'https://maharatech.gov.eg/enrol/index.php?id=14';
+const MOOC_PT2       = 'https://maharatech.gov.eg/course/view.php?id=42';
+const MOOC_LABS      = 'https://maharatech.gov.eg/course/view.php?id=2371';
+
+// ── PASTE INDIVIDUAL VIDEO LINKS HERE ──────────────────────────
+// Format:  href: 'https://www.youtube.com/watch?v=VIDEO_ID'
+// Leave as null until you have the link.
+
+const VID = {
+  lec01: null,  // Lecture 01: Introduction
+  lec02: null,  // Lecture 02: Circuits & Systems Review
+  lec03: null,  // Lecture 03: Semiconductors Review
+  lec04: null,  // Lecture 04: MOSFET Large Signal Model
+  lec05: null,  // Lecture 05: MOSFET Small Signal Model
+  lec06: null,  // Lecture 06: Single-Stage CMOS Amplifiers
+  lec07: null,  // Lecture 07: Cascode Amplifiers
+  lec08: null,  // Lecture 08: Frequency Response (1)
+  lec09: null,  // Lecture 09: Frequency Response (2)
+  lec10: null,  // Lecture 10: Current Mirrors
+  lec11: null,  // Lecture 11: Differential Amplifier
+  lec12: null,  // Lecture 12: Five-Transistor OTA
+  lec13: null,  // Lecture 13: gm/ID Design Methodology
+  lec14: null,  // Lecture 14: OTA Design Example
+  lec15: null,  // Lecture 15: Negative Feedback
+  lec16: null,  // Lecture 16: OTA Stability & Compensation
+  lec17: null,  // Lecture 17: Noise (1)
+  lec18: null,  // Lecture 18: Noise (2)
+  lec19: null,  // Lecture 19: OTA Topologies
+  lec20: null,  // Lecture 20: Common-Mode Feedback
+  lec21: null,  // Lecture 21: Slew Rate and PSRR
+  lec22: null,  // Lecture 22: Variability and Mismatch
+  lec23: null,  // Lecture 23: Biasing and References
+};
+
+// ── PASTE INDIVIDUAL LAB PDF LINKS HERE ────────────────────────
+// Format:  href: 'https://drive.google.com/file/d/FILE_ID/view'
+// Leave as null until you open the Drive folder and copy each link.
+
+const LAB = {
+  lab01a: null, // Lab 01 Part 1: Basic Simulations RC Circuit
+  lab01b: null, // Lab 01 Part 2: MOSFET Characterization
+  lab02:  null, // Lab 02: Common-Source Amplifier
+  lab03:  null, // Lab 03: Cascode Amplifier
+  lab04:  null, // Lab 04: Frequency Response of CD Buffer
+  lab05:  null, // Lab 05: Current Mirrors
+  lab06:  null, // Lab 06: Differential Amplifier
+  lab07:  null, // Lab 07: OTA Design
+  lab08:  null, // Lab 08: Negative Feedback
+  lab09:  null, // Lab 09 / Mini Project 01: Two-Stage Miller OTA
+  lab10:  null, // Lab 10: Noise Simulation
+  lab11:  null, // Lab 11 / Mini Project 02: FD Folded Cascode OTA
+};
+
+
+// ═══════════════════════════════════════════════════════════════
+//  TREE DATA
+// ═══════════════════════════════════════════════════════════════
+const TREE_DATA = [
+
+  // ── LECTURES ──────────────────────────────────────────────────
+  {
+    id: 'lectures',
+    title: 'LECTURES',
+    sub: '23 lectures · No time constraints',
+    children: [
+      {
+        id: 'lec01', title: 'Lecture 01: Introduction',
+        detail: 'IC design flow overview, CMOS technology context, why analog design matters in modern SoCs, course roadmap.',
+        topics: ['IC design flow', 'CMOS overview', 'Analog vs. digital', 'Course roadmap'],
+        resources: [
+          { label: '▶ Video', href: VID.lec01, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+          { label: '◉ MOOC Pt.1', href: MOOC_PT1, type: 'mooc' },
+        ]
+      },
+      {
+        id: 'lec02', title: 'Lecture 02: Circuits & Systems Review',
+        detail: 'Transfer functions, Bode plots, two-port models, Thevenin/Norton, feedback basics as prerequisite tools.',
+        topics: ['Transfer functions', 'Bode plots', 'Two-port models', 'Thevenin/Norton', 'Feedback basics'],
+        resources: [
+          { label: '▶ Video', href: VID.lec02, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec03', title: 'Lecture 03: Semiconductors Review',
+        detail: 'Drift & diffusion, pn-junction, MOSFET structure, threshold voltage, basic I-V concept.',
+        topics: ['Drift & diffusion', 'pn-junction', 'MOSFET structure', 'Threshold voltage', 'Band theory'],
+        resources: [
+          { label: '▶ Video', href: VID.lec03, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec04', title: 'Lecture 04: MOSFET Large Signal Model',
+        detail: 'Triode vs. saturation regions, channel-length modulation, body effect, I-V equations for design.',
+        topics: ['Triode region', 'Saturation region', 'Channel-length modulation', 'Body effect', 'I-V equations'],
+        resources: [
+          { label: '▶ Video', href: VID.lec04, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec05', title: 'Lecture 05: MOSFET Small Signal Model',
+        detail: 'Linearized model valid around quiescent point. gm, gds, Cgs, Cgd. Hybrid-π model.',
+        topics: ['gm', 'gds / ro', 'Cgs / Cgd', 'Hybrid-π model', 'Quiescent point'],
+        resources: [
+          { label: '▶ Video', href: VID.lec05, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec06', title: 'Lecture 06: Single-Stage CMOS Amplifiers',
+        detail: 'Common-source, common-drain (source follower), common-gate topologies. Gain, input/output impedance.',
+        topics: ['CS amplifier', 'CD / source follower', 'CG amplifier', 'Gain expressions', 'I/O impedance'],
+        resources: [
+          { label: '▶ Video', href: VID.lec06, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec07', title: 'Lecture 07: Cascode Amplifiers',
+        detail: 'Gain boosting via cascode, telescopic vs. folded cascode configurations, active cascode loads.',
+        topics: ['Telescopic cascode', 'Folded cascode', 'Active cascode load', 'Output resistance', 'Gain boosting'],
+        resources: [
+          { label: '▶ Video', href: VID.lec07, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec08', title: 'Lecture 08: Frequency Response (1)',
+        detail: 'High-frequency MOSFET model, Miller approximation, dominant-pole approach, fT and fmax.',
+        topics: ['HF MOSFET model', 'Miller approximation', 'Dominant pole', 'fT', 'fmax'],
+        resources: [
+          { label: '▶ Video', href: VID.lec08, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec09', title: 'Lecture 09: Frequency Response (2)',
+        detail: 'Open-circuit time constants method (OCTC), second-pole estimation, gain-bandwidth product.',
+        topics: ['OCTC method', 'Second pole', 'GBW product', 'Bandwidth tradeoffs'],
+        resources: [
+          { label: '▶ Video', href: VID.lec09, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec10', title: 'Lecture 10: Current Mirrors',
+        detail: 'Basic mirror, systematic offset, cascode mirror for high output impedance, wide-swing (low-compliance) cascode.',
+        topics: ['Basic mirror', 'Systematic offset', 'Cascode mirror', 'Wide-swing', 'Low-compliance'],
+        resources: [
+          { label: '▶ Video', href: VID.lec10, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec11', title: 'Lecture 11: Differential Amplifier',
+        detail: 'Half-circuit analysis, CMRR derivation, common-mode input range, tail-current matching.',
+        topics: ['Diff pair', 'Half-circuit', 'CMRR', 'CM input range', 'Tail current'],
+        resources: [
+          { label: '▶ Video', href: VID.lec11, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+          { label: '◉ MOOC Pt.2', href: MOOC_PT2, type: 'mooc' },
+        ]
+      },
+      {
+        id: 'lec12', title: 'Lecture 12: Five-Transistor OTA',
+        detail: 'Topology, gain expression, output impedance, gain-bandwidth product of the 5T OTA.',
+        topics: ['5T topology', 'Gain expression', 'Output impedance', 'GBW', 'Load capacitor'],
+        resources: [
+          { label: '▶ Video', href: VID.lec12, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec13', title: 'Lecture 13: gm/ID Design Methodology',
+        detail: 'Technology-independent sizing, inversion coefficient (IC), gm/ID vs IC curves, design workflow.',
+        topics: ['gm/ID ratio', 'Inversion coefficient IC', 'Design charts', 'Sizing workflow', 'Technology-independent'],
+        resources: [
+          { label: '▶ Video', href: VID.lec13, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec14', title: 'Lecture 14: OTA Design Example',
+        detail: 'End-to-end 5T OTA design: spec → gm/ID charts → transistor sizing → simulation → tuning.',
+        topics: ['Spec translation', 'gm/ID charts', 'Transistor sizing', 'Simulation verification', 'Tuning'],
+        resources: [
+          { label: '▶ Video', href: VID.lec14, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec15', title: 'Lecture 15: Negative Feedback',
+        detail: 'Four feedback topologies, loop-gain analysis, gain desensitization, BW extension, non-ideal effects.',
+        topics: ['Series-shunt', 'Shunt-series', 'Loop gain T', 'Desensitization', 'Non-ideal feedback'],
+        resources: [
+          { label: '▶ Video', href: VID.lec15, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec16', title: 'Lecture 16: OTA Stability & Compensation',
+        detail: 'Phase/gain margin, Miller compensation, pole splitting, RHP zero and its nulling resistor.',
+        topics: ['Phase margin PM', 'Gain margin GM', 'Miller Cc', 'Pole splitting', 'RHP zero', 'Nulling resistor'],
+        resources: [
+          { label: '▶ Video', href: VID.lec16, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec17', title: 'Lecture 17: Noise (1)',
+        detail: 'Noise sources — thermal, shot, flicker. Power spectral density. MOSFET noise models.',
+        topics: ['Thermal noise', 'Shot noise', 'Flicker / 1/f noise', 'PSD', 'MOSFET noise model'],
+        resources: [
+          { label: '▶ Video', href: VID.lec17, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec18', title: 'Lecture 18: Noise (2)',
+        detail: 'Input-referred noise, noise figure, noise in differential pairs and OTAs.',
+        topics: ['Input-referred noise', 'Noise figure NF', 'Diff pair noise', 'OTA noise', 'Noise optimization'],
+        resources: [
+          { label: '▶ Video', href: VID.lec18, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec19', title: 'Lecture 19: OTA Topologies',
+        detail: 'Survey: folded cascode, telescopic, current-mirror, recycling folded cascode OTAs and their design trade-offs.',
+        topics: ['FC OTA', 'Telescopic OTA', 'CM OTA', 'RFC OTA', 'Gain-BW tradeoffs'],
+        resources: [
+          { label: '▶ Video', href: VID.lec19, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec20', title: 'Lecture 20: Common-Mode Feedback (CMFB)',
+        detail: 'Why CMFB is needed in FD OTAs, capacitive CMFB (for switched-cap), resistive CMFB, stability of CMFB loop.',
+        topics: ['FD OTA', 'CM output shift', 'Capacitive CMFB', 'Resistive CMFB', 'CMFB stability'],
+        resources: [
+          { label: '▶ Video', href: VID.lec20, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec21', title: 'Lecture 21: Slew Rate & PSRR',
+        detail: 'Large-signal slew-rate limitation in OTAs, PSRR+ and PSRR−, supply noise coupling paths.',
+        topics: ['Slew rate SR', 'PSRR+', 'PSRR−', 'Supply coupling', 'Layout impact on PSRR'],
+        resources: [
+          { label: '▶ Video', href: VID.lec21, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec22', title: 'Lecture 22: Variability & Mismatch',
+        detail: 'Pelgrom mismatch model, Monte Carlo simulation, worst-case corner analysis, yield.',
+        topics: ['Pelgrom model', 'VT mismatch', 'Monte Carlo', 'Process corners', 'Yield analysis'],
+        resources: [
+          { label: '▶ Video', href: VID.lec22, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'lec23', title: 'Lecture 23: Biasing & References',
+        detail: 'Beta-multiplier self-biased reference, bandgap voltage reference, PTAT/CTAT generation, start-up circuits.',
+        topics: ['Beta-multiplier', 'Bandgap reference', 'PTAT current', 'CTAT current', 'Start-up circuit'],
+        resources: [
+          { label: '▶ Video', href: VID.lec23, type: 'video' },
+          { label: '◈ Slides', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+    ]
+  },
+
+  // ── LABS ──────────────────────────────────────────────────────
+  {
+    id: 'labs',
+    title: 'LABS',
+    sub: '11 labs · 2 mini projects · Cadence / Xschem / Mentor',
+    children: [
+      {
+        id: 'lab01a', title: 'Lab 01 (Part 1): Basic RC Circuit Simulations',
+        detail: 'First Cadence/Xschem session. Transient simulation, AC simulation, pole-zero simulation, parametric sweeps, calculator expressions.',
+        topics: ['Transient sim', 'AC sim', 'Pole-zero sim', 'Parametric sweep', 'Calculator expressions'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab01a, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab01a, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab01b', title: 'Lab 01 (Part 2): MOSFET Characterization',
+        detail: 'DC sweeps for long- and short-channel MOSFET. ID-VGS, gm-VGS, ID-VDS, gm and gds in triode and saturation.',
+        topics: ['ID-VGS sweep', 'gm-VGS', 'ID-VDS', 'Short-channel effects', 'gm in triode/sat'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab01b, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab01b, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab02', title: 'Lab 02: Common-Source Amplifier',
+        detail: 'Design charts, OP simulation, gain non-linearity, maximum attainable gain, gain linearization techniques.',
+        topics: ['Design charts', 'OP simulation', 'Gain non-linearity', 'Max attainable gain', 'Gain linearization'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab02, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab02, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab03', title: 'Lab 03: Cascode Amplifier',
+        detail: 'Cascode with active load, cascode with resistive load, effect of cascode on gain, BW, and GBW.',
+        topics: ['Active load', 'Resistive load', 'Cascode gain', 'BW comparison', 'GBW analysis'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab03, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab03, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab04', title: 'Lab 04: Frequency Response of CD Buffer',
+        detail: 'Complex poles, frequency-domain peaking, time-domain ringing, inductive rise in source follower.',
+        topics: ['Complex poles', 'Frequency peaking', 'Time-domain ringing', 'Inductive rise'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab04, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab04, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab05', title: 'Lab 05: Current Mirrors',
+        detail: 'Simple current mirror, cascode current mirror, wide-swing (low-compliance) current mirror characterization.',
+        topics: ['Simple mirror', 'Cascode mirror', 'Wide-swing mirror', 'Compliance voltage'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab05, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab05, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab06', title: 'Lab 06: Differential Amplifier',
+        detail: 'Differential gain, common-mode gain, CMRR, common-mode input range, large-signal operation.',
+        topics: ['Differential gain', 'CM gain', 'CMRR', 'CM input range', 'Large-signal'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab06, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab06, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab07', title: 'Lab 07: OTA Design',
+        detail: 'gm/ID design charts, 5T OTA design procedure, open-loop simulation, closed-loop simulation.',
+        topics: ['gm/ID charts', '5T design procedure', 'Open-loop sim', 'Closed-loop sim'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab07, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab07, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab08', title: 'Lab 08: Negative Feedback',
+        detail: 'Behavioral modeling, hierarchy editor, effect of feedback on gain/BW/GBW, loop-gain measurement.',
+        topics: ['Behavioral model', 'Hierarchy editor', 'Loop gain', 'Gain/BW/GBW under feedback'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab08, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab08, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab09', title: 'Lab 09 · Mini Project 01: Two-Stage Miller OTA',
+        detail: 'Full design of two-stage Miller OTA: gm/ID sizing, Miller compensation, RHP zero, open-loop + closed-loop verification.',
+        topics: ['Two-stage OTA', 'Miller Cc', 'RHP zero', 'Nulling resistor', 'Verification flow'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab09, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab09, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab10', title: 'Lab 10: Noise Simulation',
+        detail: 'AC noise simulation, transient noise simulation, noise contribution in five-transistor OTA.',
+        topics: ['AC noise sim', 'Transient noise', 'Noise contribution', 'Cadence noise analysis'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab10, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab10, type: 'lab' },
+        ]
+      },
+      {
+        id: 'lab11', title: 'Lab 11 · Mini Project 02: FD Folded Cascode OTA',
+        detail: 'Design of fully-differential folded cascode OTA with capacitive feedback. Behavioral and actual CMFB network.',
+        topics: ['FD FC OTA', 'Cap CMFB', 'Behavioral CMFB', 'Full design flow', 'Monte Carlo'],
+        resources: [
+          { label: '⚙ PDF (Cadence)', href: LAB.lab11, type: 'lab' },
+          { label: '⚙ PDF (Xschem)', href: LAB.lab11, type: 'lab' },
+        ]
+      },
+    ]
+  },
+
+  // ── RESOURCES HUB ─────────────────────────────────────────────
+  {
+    id: 'resources',
+    title: 'RESOURCES HUB',
+    sub: 'All links in one place',
+    children: [
+      {
+        id: 'res-videos', title: 'Lecture Video Playlists',
+        detail: 'Two YouTube playlists covering all 23 lectures. Free access, no login required.',
+        topics: ['YouTube', 'Part 1 (Lec 01–14)', 'Part 2 (Lec 11–23)', 'Free access'],
+        resources: [
+          { label: '▶ Playlist Pt.1', href: 'https://www.youtube.com/playlist?list=PLMSBalys69yzp1vrmnYAmpRFiptbuGuaj', type: 'video' },
+          { label: '▶ Playlist Pt.2', href: 'https://www.youtube.com/playlist?list=PLMSBalys69yxQrKE_46AYuFkthIBh-WVJ', type: 'video' },
+        ]
+      },
+      {
+        id: 'res-slides', title: 'Lecture Slides (Google Drive)',
+        detail: 'Full slide decks for all lectures.',
+        topics: ['PDF slides', 'All lectures', 'Google Drive'],
+        resources: [
+          { label: '◈ Slides Folder', href: SLIDES_FOLDER, type: 'slides' },
+        ]
+      },
+      {
+        id: 'res-labs-folder', title: 'Lab Files Folders (All Tools)',
+        detail: 'Lab PDFs for Cadence, Xschem+Ngspice, and Mentor toolchains.',
+        topics: ['Cadence', 'Xschem + Ngspice', 'Mentor'],
+        resources: [
+          { label: '⚙ Cadence Folder', href: LABS_FOLDER_C, type: 'lab' },
+          { label: '⚙ Xschem Folder', href: LABS_FOLDER_X, type: 'lab' },
+          { label: '⚙ Mentor Folder',  href: LABS_FOLDER_M, type: 'lab' },
+        ]
+      },
+      {
+        id: 'res-mooc', title: 'MaharaTech MOOC',
+        detail: 'Structured MOOC with certificate. Three separate courses covering Part 1, Part 2, and Labs.',
+        topics: ['MaharaTech', 'Completion certificate', 'Part 1 · Part 2 · Labs'],
+        resources: [
+          { label: '◉ MOOC Pt.1', href: MOOC_PT1, type: 'mooc' },
+          { label: '◉ MOOC Pt.2', href: MOOC_PT2, type: 'mooc' },
+          { label: '◉ MOOC Labs',  href: MOOC_LABS, type: 'mooc' },
+        ]
+      },
+      {
+        id: 'res-adt', title: 'Analog Designer\'s Toolbox (ADT)',
+        detail: 'Master Micro\'s EDA tool built around the gm/ID methodology. Free academic license available.',
+        topics: ['gm/ID tool', 'Free academic license', 'ADT'],
+        resources: [
+          { label: '↗ ADT Website', href: 'https://adt.master-micro.com', type: 'mooc' },
+        ]
+      },
+    ]
+  },
+];
+
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDERER
+// ═══════════════════════════════════════════════════════════════
+function buildBadges(resources) {
+  if (!resources || !resources.length) return '';
+  const html = resources.map(r => {
+    const isPending = !r.href;
+    if (isPending) {
+      return `<span class="badge badge-pending" title="Link not added yet — see instructions">⚠ ${r.label.replace(/^[▶◈⚙◉↗]\s*/, '')}</span>`;
+    }
+    return `<a class="badge badge-${r.type}" href="${r.href}" target="_blank" rel="noopener"
+               title="${r.label}" onclick="event.stopPropagation()">${r.label}</a>`;
+  }).join('');
+  return `<div class="badges">${html}</div>`;
+}
+
+function buildNode(node, depth) {
+  const hasChildren = node.children && node.children.length > 0;
+  const isLeaf = !hasChildren;
+
+  const li = document.createElement('li');
+  li.className = `tree-node depth-${depth}`;
+  li.dataset.searchText = [node.title, node.sub || '', node.detail || '', (node.topics||[]).join(' ')].join(' ').toLowerCase();
+
+  const row = document.createElement('div');
+  row.className = `node-row${isLeaf ? ' leaf' : ''}`;
+
+  // toggle icon
+  const icon = document.createElement('div');
+  icon.className = 'toggle-icon';
+  icon.innerHTML = `<svg viewBox="0 0 10 10"><polyline points="3,2 7,5 3,8"/></svg>`;
+
+  // label
+  const lbl = document.createElement('div');
+  lbl.className = 'node-label';
+  lbl.innerHTML = `<span class="node-title">${node.title}</span>` +
+    (node.sub ? `<span class="node-sub">${node.sub}</span>` : '');
+
+  row.appendChild(icon);
+  row.appendChild(lbl);
+
+  if (node.resources && node.resources.length) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = buildBadges(node.resources);
+    if (tmp.firstElementChild) row.appendChild(tmp.firstElementChild);
+  }
+
+  li.appendChild(row);
+
+  // detail panel
+  if (node.detail || (node.topics && node.topics.length)) {
+    const det = document.createElement('div');
+    det.className = 'node-detail';
+    let h = '';
+    if (node.detail) h += `<div>${node.detail}</div>`;
+    if (node.topics && node.topics.length)
+      h += `<div class="topics">${node.topics.map(t=>`<span class="topic-tag">${t}</span>`).join('')}</div>`;
+    det.innerHTML = h;
+    li.appendChild(det);
+  }
+
+  // children
+  if (hasChildren) {
+    const wrap = document.createElement('div');
+    wrap.className = 'children-wrap';
+    const ul = document.createElement('ul');
+    ul.className = 'tree';
+    node.children.forEach(c => ul.appendChild(buildNode(c, depth + 1)));
+    wrap.appendChild(ul);
+    li.appendChild(wrap);
+
+    row.addEventListener('click', () => {
+      const open = row.classList.toggle('open');
+      wrap.classList.toggle('open', open);
+      const det = li.querySelector(':scope > .node-detail');
+      if (det) det.classList.toggle('visible', open);
+    });
+  } else {
+    row.addEventListener('click', () => {
+      const det = li.querySelector(':scope > .node-detail');
+      if (det) {
+        const open = row.classList.toggle('open');
+        det.classList.toggle('visible', open);
+      }
+    });
+  }
+  return li;
+}
+
+function renderTree() {
+  const root = document.getElementById('tree-root');
+  root.innerHTML = '';
+  TREE_DATA.forEach(n => root.appendChild(buildNode(n, 0)));
+}
+
+// search
+document.getElementById('tree-search').addEventListener('input', function () {
+  const q = this.value.trim().toLowerCase();
+  const all = document.querySelectorAll('.tree-node');
+  if (!q) { all.forEach(n => n.style.display = ''); return; }
+
+  function hasMatch(el) {
+    if ((el.dataset.searchText || '').includes(q)) return true;
+    return [...el.querySelectorAll('.tree-node')].some(c => (c.dataset.searchText||'').includes(q));
+  }
+
+  all.forEach(n => {
+    if (hasMatch(n)) {
+      n.style.display = '';
+      let wrap = n.closest('.children-wrap');
+      while (wrap) {
+        wrap.classList.add('open');
+        const r = wrap.previousElementSibling;
+        if (r && r.classList.contains('node-row')) r.classList.add('open');
+        wrap = wrap.parentElement && wrap.parentElement.closest('.children-wrap');
+      }
+    } else {
+      n.style.display = 'none';
+    }
+  });
+});
+
+renderTree();
+</script>
+</body>
+</html>
