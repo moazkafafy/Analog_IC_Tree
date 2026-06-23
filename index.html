@@ -3,16 +3,21 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Analog IC Design — Knowledge Tree</title>
+<title>Analog IC Design — Multi-Instructor Knowledge Tree</title>
 <style>
-  /* ── TOKENS ── */
   :root {
-    --red-deep:   #7A0000;
-    --red-main:   #9B1C1C;
-    --red-bright: #C0392B;
-    --red-glow:   rgba(155,28,28,0.15);
-    --gold:       #B8860B;
-    --gold-light: #D4A017;
+    --hesham-deep:   #7A0000;
+    --hesham-main:   #9B1C1C;
+    --hesham-bright: #C0392B;
+    --hesham-gold:   #D4A017;
+    --youssef-deep:   #0a2463;
+    --youssef-main:   #247ba0;
+    --youssef-bright: #3498db;
+    --youssef-gold:   #1ca3b8;
+    --color-deep:   var(--hesham-deep);
+    --color-main:   var(--hesham-main);
+    --color-bright: var(--hesham-bright);
+    --color-gold:   var(--hesham-gold);
     --white:      #FFFFFF;
     --off-white:  #FDF8F8;
     --warm-bg:    #F8F0F0;
@@ -21,1264 +26,190 @@
     --text-muted: #8A7070;
     --border:     #E8D8D8;
     --shadow:     rgba(122,0,0,0.12);
-    --pending:    #C17F24;
     --green:      #1D6A40;
-    --blue:       #1A4A7A;
+  }
+
+  body.instructor-youssef {
+    --color-deep:   var(--youssef-deep);
+    --color-main:   var(--youssef-main);
+    --color-bright: var(--youssef-bright);
+    --color-gold:   var(--youssef-gold);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-y: scroll; scrollbar-gutter: stable; }
   body { font-family: 'Georgia', serif; background: var(--white); color: var(--text-dark); min-height: 100vh; }
 
-  /* ── HEADER ── */
-  header {
-    background: var(--red-deep);
-    padding: 28px 40px 24px;
-    position: relative; overflow: hidden;
-  }
-  header::before {
-    content: ''; position: absolute; inset: 0;
-    background:
-      repeating-linear-gradient(90deg, transparent 0, transparent 38px, rgba(255,255,255,0.03) 38px, rgba(255,255,255,0.03) 40px),
-      repeating-linear-gradient(0deg,  transparent 0, transparent 38px, rgba(255,255,255,0.03) 38px, rgba(255,255,255,0.03) 40px);
-    pointer-events: none;
-  }
-  .header-inner { position: relative; max-width: 1000px; margin: 0 auto; display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
-  .header-text { flex: 1; min-width: 200px; }
-  header h1 { font-family: 'Courier New', monospace; font-size: clamp(1.3rem, 2.5vw, 1.85rem); font-weight: 700; color: #fff; letter-spacing: 0.04em; }
-  header h1 span { color: var(--gold-light); }
+  header { background: var(--color-deep); padding: 28px 40px 28px; position: relative; overflow: hidden; transition: background 0.3s; min-height: 240px; contain: layout style; }
+  header::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0, transparent 38px, rgba(255,255,255,0.03) 38px, rgba(255,255,255,0.03) 40px), repeating-linear-gradient(0deg, transparent 0, transparent 38px, rgba(255,255,255,0.03) 38px, rgba(255,255,255,0.03) 40px); pointer-events: none; }
+  .header-inner { position: relative; max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 260px; gap: 0 32px; align-items: start; }
+  .header-left { display: flex; flex-direction: column; min-width: 0; }
+  .header-right { display: flex; flex-direction: column; gap: 14px; width: 260px; }
+  header h1 { font-family: 'Courier New', monospace; font-size: 1.85rem; font-weight: 700; color: #fff; letter-spacing: 0.04em; }
+  header h1 span { color: var(--color-gold); transition: color 0.3s; }
   header p { margin-top: 4px; font-size: 0.78rem; color: rgba(255,255,255,0.48); font-family: 'Courier New', monospace; letter-spacing: 0.06em; }
   .header-badges { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 12px; }
-  .hbadge { background: rgba(184,134,11,0.15); border: 1px solid var(--gold); color: var(--gold-light); font-family: 'Courier New', monospace; font-size: 0.66rem; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 2px; }
+  .hbadge { background: rgba(255,255,255,0.1); border: 1px solid var(--color-gold); color: var(--color-gold); font-family: 'Courier New', monospace; font-size: 0.66rem; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 2px; transition: color 0.3s, border-color 0.3s; }
 
-  /* ── COURSE & MODE PANEL ── */
-  .controls-panel {
-    display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
-  }
-  .course-panel {
-    display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
-    padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.15);
-  }
-  .course-label { font-family: 'Courier New', monospace; font-size: 0.65rem; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; text-transform: uppercase; text-align: right; }
-  .course-btns { display: flex; gap: 8px; }
-  .course-btn {
-    font-family: 'Courier New', monospace;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    padding: 7px 16px;
-    border-radius: 3px;
-    border: 1.5px solid rgba(255,255,255,0.25);
-    background: transparent;
-    color: rgba(255,255,255,0.55);
-    cursor: pointer;
-    transition: background 0.18s, border-color 0.18s, color 0.18s;
-    display: inline-block;
-  }
-  .course-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.4); }
-  .course-btn.active { background: rgba(255,255,255,0.14); color: #fff; border-color: var(--gold-light); }
+  .ctrl-group { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+  .ctrl-label { font-family: 'Courier New', monospace; font-size: 0.62rem; color: rgba(255,255,255,0.38); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ctrl-btns { display: grid; gap: 5px; width: 100%; }
+  .ctrl-btns.stacked { grid-template-columns: 1fr; }
+  .ctrl-btns.two-col { grid-template-columns: 1fr 1fr; }
+  .ctrl-group.hidden { visibility: hidden; pointer-events: none; }
+  .ctrl-btn { font-family: 'Courier New', monospace; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; padding: 8px 10px; border-radius: 3px; border: 1.5px solid rgba(255,255,255,0.25); background: transparent; color: rgba(255,255,255,0.65); cursor: pointer; transition: background-color 0.18s, color 0.18s, border-color 0.18s; outline: none; line-height: 1.1; text-align: center; width: 100%; will-change: background-color, color, border-color; }
+  .ctrl-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); border-color: rgba(255,255,255,0.4); }
+  .ctrl-btn.active { background: var(--color-gold); color: var(--color-deep); border-color: var(--color-gold); }
 
-  /* ── MODE SWITCHER ── */
-  .mode-panel {
-    display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
-  }
-  .mode-label { font-family: 'Courier New', monospace; font-size: 0.65rem; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; text-transform: uppercase; text-align: right; }
-  .mode-btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-  .mode-btn {
-    font-family: 'Courier New', monospace;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    padding: 6px 14px;
-    border-radius: 3px;
-    border: 1.5px solid rgba(255,255,255,0.25);
-    background: transparent;
-    color: rgba(255,255,255,0.55);
-    cursor: pointer;
-    transition: background 0.18s, border-color 0.18s, color 0.18s;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .mode-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.4); }
-  .mode-btn.active { background: rgba(255,255,255,0.14); color: #fff; border-color: var(--gold-light); }
-  .mode-btn .mode-icon { font-size: 0.85rem; }
-  .mode-btn .soon-chip { font-size: 0.55rem; background: rgba(184,134,11,0.35); border: 1px solid var(--gold); color: var(--gold-light); padding: 1px 5px; border-radius: 2px; vertical-align: middle; }
-
-  /* ── MODE DESCRIPTION BAR ── */
-  .mode-desc {
-    background: var(--warm-bg);
-    border-bottom: 1px solid var(--border);
-    padding: 9px 40px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    display: flex; gap: 20px; flex-wrap: wrap; align-items: center;
-  }
-  .mode-desc-text { flex: 1; }
-  .mode-desc-text strong { color: var(--red-main); }
-  .pending-note { color: var(--pending); border: 1px solid rgba(193,127,36,0.35); padding: 2px 8px; border-radius: 2px; font-size: 0.66rem; flex-shrink: 0; }
-
-  /* ── MAIN ── */
-  main { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
-
-  /* ── SEARCH ── */
+  main { max-width: 1000px; margin: 0 auto; padding: 32px 24px 80px; }
   .search-wrap { margin-bottom: 24px; position: relative; }
-  #tree-search {
-    width: 100%; padding: 10px 16px 10px 40px;
-    font-family: 'Courier New', monospace; font-size: 0.82rem;
-    background: var(--off-white); border: 1.5px solid var(--border);
-    border-radius: 4px; color: var(--text-dark); outline: none;
-    transition: border-color 0.18s, box-shadow 0.18s;
-  }
-  #tree-search:focus { border-color: var(--red-main); box-shadow: 0 0 0 3px var(--red-glow); }
+  #tree-search { width: 100%; padding: 10px 16px 10px 40px; font-family: 'Courier New', monospace; font-size: 0.82rem; background: var(--off-white); border: 1.5px solid var(--border); border-radius: 4px; color: var(--text-dark); outline: none; transition: border-color 0.18s; }
+  #tree-search:focus { border-color: var(--color-main); box-shadow: 0 0 0 3px rgba(155,28,28,0.15); }
   .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
 
-  /* ── FILTER BAR (mode 3) ── */
-  .filter-bar {
-    display: none;
-    gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
-    padding: 12px 16px;
-    background: var(--warm-bg); border: 1px solid var(--border); border-radius: 4px;
-  }
-  .filter-bar.visible { display: flex; }
-  .filter-label { font-family: 'Courier New', monospace; font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.06em; align-self: center; margin-right: 4px; }
-  .filter-chip {
-    font-family: 'Courier New', monospace; font-size: 0.68rem; font-weight: 700;
-    padding: 4px 11px; border-radius: 3px; border: 1.5px solid var(--border);
-    background: var(--white); color: var(--text-mid); cursor: pointer;
-    transition: all 0.15s;
-  }
-  .filter-chip:hover { border-color: var(--red-main); color: var(--red-main); }
-  .filter-chip.active { background: var(--red-deep); border-color: var(--red-deep); color: #fff; }
-  .filter-chip[data-type="video"].active  { background: var(--red-main); border-color: var(--red-main); }
-  .filter-chip[data-type="slides"].active { background: var(--gold); border-color: var(--gold); color: #fff; }
-  .filter-chip[data-type="lab"].active    { background: #3A3A3A; border-color: #3A3A3A); color: #fff; }
-  .filter-chip[data-type="mooc"].active   { background: var(--green); border-color: var(--green); }
+  .section-header { font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-deep); padding: 6px 0 6px 2px; margin: 24px 0 6px; border-bottom: 2px solid var(--color-deep); display: flex; align-items: center; gap: 8px; transition: color 0.3s, border-color 0.3s; }
+  .section-header:first-child { margin-top: 0; }
 
-  /* ── TREE ── */
   .tree { list-style: none; }
   .tree-node { position: relative; }
-
-  /* ── SECTION DIVIDER (two-column mode) ── */
-  .section-header {
-    font-family: 'Courier New', monospace;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--red-deep);
-    padding: 6px 0 6px 2px;
-    margin: 24px 0 6px;
-    border-bottom: 2px solid var(--red-deep);
-    display: flex; align-items: center; gap: 8px;
-  }
-  .section-header:first-child { margin-top: 0; }
-  .section-header .sh-count { font-size: 0.62rem; color: var(--text-muted); font-weight: 400; letter-spacing: 0.04em; }
-
-  /* ── CONNECTOR LINES ── */
   .tree-node > .children-wrap { position: relative; padding-left: 28px; }
-  .tree-node > .children-wrap::before {
-    content: ''; position: absolute;
-    left: 10px; top: 0; bottom: 12px;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--red-main), transparent);
-    border-radius: 1px;
-  }
-  .children-wrap > .tree-node > .node-row::before {
-    content: ''; position: absolute;
-    left: -18px; top: 50%; width: 18px; height: 2px;
-    background: var(--red-main); transform: translateY(-50%); opacity: 0.5;
-  }
+  .tree-node > .children-wrap::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 12px; width: 2px; background: linear-gradient(to bottom, var(--color-main), transparent); border-radius: 1px; transition: background 0.3s; }
+  .children-wrap > .tree-node > .node-row::before { content: ''; position: absolute; left: -18px; top: 50%; width: 18px; height: 2px; background: var(--color-main); transform: translateY(-50%); opacity: 0.5; transition: background 0.3s; }
 
-  /* ── NODE ROW ── */
-  .node-row {
-    position: relative; display: flex; align-items: center; gap: 10px;
-    cursor: pointer; padding: 9px 14px 9px 12px; margin: 3px 0;
-    border-radius: 4px; border: 1px solid transparent;
-    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
-    user-select: none;
-  }
+  .node-row { position: relative; display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 9px 14px 9px 12px; margin: 3px 0; border-radius: 4px; border: 1px solid transparent; transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s; user-select: none; }
   .node-row:hover { background: var(--warm-bg); border-color: var(--border); box-shadow: 0 2px 8px var(--shadow); }
-  .node-row.open  { background: var(--off-white); border-color: var(--red-main); box-shadow: 0 2px 12px var(--red-glow); }
-  .depth-0 > .node-row { padding: 11px 16px; }
+  .node-row.open { background: var(--off-white); border-color: var(--color-main); }
 
-  /* ── TOGGLE ── */
-  .toggle-icon {
-    flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
-    background: var(--red-deep); display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
-  }
+  .toggle-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--color-deep); display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
   .toggle-icon svg { width: 10px; height: 10px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; transition: transform 0.22s; }
-  .node-row.open .toggle-icon { background: var(--red-bright); }
+  .node-row.open .toggle-icon { background: var(--color-bright); }
   .node-row.open .toggle-icon svg { transform: rotate(90deg); }
-  .leaf .toggle-icon { background: transparent; border: 1.5px solid var(--border); }
-  .leaf .toggle-icon svg { stroke: var(--text-muted); }
+  .leaf .toggle-icon { background: transparent; border: 1.5px solid var(--border); opacity: 0.5; }
+  .leaf .toggle-icon svg { stroke: var(--text-muted); opacity: 0.5; }
 
-  /* ── LABEL ── */
   .node-label { flex: 1; font-family: 'Courier New', monospace; line-height: 1.35; min-width: 0; }
   .node-title { display: block; font-size: 0.88rem; font-weight: 700; color: var(--text-dark); }
-  .depth-0 > .node-row .node-title { font-size: 0.98rem; color: var(--red-deep); }
-  .node-sub { display: block; font-size: 0.68rem; color: var(--text-muted); margin-top: 1px; }
 
-  /* ── BADGES ── */
-  .badges { 
-    display: flex; gap: 5px; flex-wrap: wrap; flex-shrink: 1;
-    align-items: center;
-  }
-  .badge {
-    font-family: 'Courier New', monospace; font-size: 0.6rem; letter-spacing: 0.03em;
-    padding: 2px 6px; border-radius: 2px; text-decoration: none; font-weight: 700;
-    cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 2px;
-    transition: opacity 0.15s; white-space: nowrap;
-  }
+  .badges { display: flex; gap: 5px; flex-wrap: wrap; flex-shrink: 1; align-items: center; }
+  .badge { font-family: 'Courier New', monospace; font-size: 0.6rem; letter-spacing: 0.03em; padding: 2px 6px; border-radius: 2px; text-decoration: none; font-weight: 700; cursor: pointer; border: 1px solid; display: inline-flex; align-items: center; gap: 2px; transition: opacity 0.15s; white-space: nowrap; }
   .badge:hover { opacity: 0.78; }
-  .badge-video  { background: rgba(155,28,28,0.1);   color: var(--red-main); border: 1px solid rgba(155,28,28,0.3); }
-  .badge-slides { background: rgba(184,134,11,0.1);  color: var(--gold);     border: 1px solid rgba(184,134,11,0.3); }
-  .badge-lab    { background: rgba(26,26,26,0.07);   color: var(--text-mid); border: 1px solid var(--border); }
-  .badge-mooc   { background: rgba(29,106,64,0.08);  color: var(--green);    border: 1px solid rgba(29,106,64,0.25); }
-  .badge-pending { background: rgba(193,127,36,0.08); color: var(--pending); border: 1px solid rgba(193,127,36,0.3); cursor: default; font-style: italic; }
+  .badge-slides { background: rgba(184,134,11,0.1); color: var(--color-gold); border-color: rgba(184,134,11,0.3); }
+  .badge-instructor { background: rgba(155,28,28,0.1); color: var(--color-main); border-color: rgba(155,28,28,0.3); }
 
-  /* ── VIDEO ITEM IN DETAIL ── */
-  .video-item {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 5px 10px; margin: 3px 3px 3px 0;
-    background: rgba(29,106,64,0.08); border: 1px solid rgba(29,106,64,0.25);
-    border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.7rem;
-    color: var(--green); text-decoration: none; cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-  }
+  .node-detail { margin: 2px 0 5px; padding: 9px 14px; background: var(--warm-bg); border-left: 3px solid var(--color-main); border-radius: 0 4px 4px 0; font-size: 0.77rem; color: var(--text-mid); font-family: 'Courier New', monospace; line-height: 1.55; display: none; transition: border-color 0.3s; }
+  .node-detail.visible { display: block; }
+
+  .video-item { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; margin: 3px 3px 3px 0; background: rgba(29,106,64,0.08); border: 1px solid rgba(29,106,64,0.25); border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.7rem; color: var(--green); text-decoration: none; cursor: pointer; transition: all 0.15s; }
   .video-item:hover { background: rgba(29,106,64,0.15); border-color: rgba(29,106,64,0.5); }
   .video-item::before { content: '▶'; font-size: 0.55rem; flex-shrink: 0; }
-  .video-item.loading { opacity: 0.6; cursor: wait; }
   .videos-list { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
 
-  /* ── COLLAPSE ── */
   .children-wrap { overflow: hidden; max-height: 0; transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1); }
   .children-wrap.open { max-height: 4000px; }
 
-  /* ── DETAIL PANEL ── */
-  .node-detail {
-    margin: 2px 0 5px; padding: 9px 14px;
-    background: var(--warm-bg); border-left: 3px solid var(--red-main);
-    border-radius: 0 4px 4px 0;
-    font-size: 0.77rem; color: var(--text-mid); font-family: 'Courier New', monospace;
-    line-height: 1.55; display: none;
-  }
-  .node-detail.visible { display: block; }
-  .topics { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-  .topic-tag {
-    background: rgba(155,28,28,0.08); border: 1px solid rgba(155,28,28,0.2);
-    color: var(--red-main); font-size: 0.64rem; padding: 2px 8px; border-radius: 2px; font-weight: 600;
-  }
-
-  /* ── TOPIC NODE TYPE INDICATOR (mode 2) ── */
-  .type-pill {
-    font-family: 'Courier New', monospace; font-size: 0.6rem; font-weight: 700;
-    padding: 1px 6px; border-radius: 10px; flex-shrink: 0; letter-spacing: 0.04em;
-  }
-  .type-pill-lecture { background: rgba(155,28,28,0.1); color: var(--red-main); border: 1px solid rgba(155,28,28,0.25); }
-  .type-pill-lab     { background: rgba(26,26,26,0.07); color: var(--text-mid); border: 1px solid var(--border); }
-
-  /* ── FOOTER ── */
   footer { text-align: center; padding: 18px; font-family: 'Courier New', monospace; font-size: 0.65rem; color: var(--text-muted); border-top: 1px solid var(--border); }
-  footer a { color: var(--red-main); text-decoration: none; }
-  footer code { background: var(--warm-bg); padding: 1px 4px; border-radius: 2px; font-size: 0.63rem; }
-
-  /* ── VIEW TRANSITION ── */
-  #tree-root { transition: opacity 0.15s; }
-  #tree-root.fading { opacity: 0; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="header-inner">
-    <div class="header-text">
+    <div class="header-left">
       <h1>Analog IC Design — <span>Knowledge Tree</span></h1>
-      <p id="course-subtitle">// Master Micro · Dr. Hesham Omran · Analog IC Design (1)</p>
+      <p>// Multi-Instructor Learning Platform · Interactive Study Map</p>
       <div class="header-badges">
-        <span class="hbadge" id="lec-count">14 LECTURES</span>
-        <span class="hbadge" id="lab-count">7 LABS</span>
+        <span class="hbadge">LECTURES</span>
         <span class="hbadge">FREE RESOURCES</span>
       </div>
     </div>
-    <div class="controls-panel">
-      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-        <a href="books.html" style="font-family:'Courier New',monospace;font-size:0.7rem;font-weight:700;letter-spacing:0.04em;padding:6px 12px;border-radius:3px;background:rgba(184,134,11,0.15);border:1.5px solid var(--gold);color:var(--gold-light);text-decoration:none;transition:all 0.15s;" onmouseover="this.style.background='rgba(184,134,11,0.25)'" onmouseout="this.style.background='rgba(184,134,11,0.15)'">📚 Books</a>
-      </div>
-      <div class="course-panel">
-        <div class="course-label">Course</div>
-        <div class="course-btns">
-          <button class="course-btn active" data-course="1">Analog (1)</button>
-          <button class="course-btn" data-course="2">Analog (2)</button>
+    <div class="header-right">
+      <div class="ctrl-group">
+        <div class="ctrl-label">Instructor</div>
+        <div class="ctrl-btns stacked">
+          <button class="ctrl-btn instructor-btn active" data-instructor="hesham">Dr. Hesham Omran</button>
+          <button class="ctrl-btn instructor-btn" data-instructor="youssef">Dr. Mohamed Youssef</button>
+          <button class="ctrl-btn instructor-btn" data-instructor="all">Compare Both</button>
         </div>
       </div>
-      <div class="mode-panel">
-        <div class="mode-label">View Mode</div>
-        <div class="mode-btns">
-          <button class="mode-btn active" data-mode="split" title="Lectures tree + Labs tree side by side">
-            <span class="mode-icon">⊞</span> Theory &amp; Practice
-          </button>
-          <button class="mode-btn" data-mode="topic" title="Everything for a topic in one place">
-            <span class="mode-icon">◈</span> By Topic
-          </button>
-          <button class="mode-btn" data-mode="resource" title="Filter by resource type">
-            <span class="mode-icon">⚙</span> By Resource <span class="soon-chip">BETA</span>
-          </button>
+      <div class="ctrl-group" id="course-panel">
+        <div class="ctrl-label">Course</div>
+        <div class="ctrl-btns two-col">
+          <button class="ctrl-btn course-btn active" data-course="1">Analog (1)</button>
+          <button class="ctrl-btn course-btn" data-course="2">Analog (2)</button>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <div class="ctrl-label">View Mode</div>
+        <div class="ctrl-btns two-col">
+          <button class="ctrl-btn mode-btn active" data-mode="split">⊞ Theory</button>
+          <button class="ctrl-btn mode-btn" data-mode="topic">◈ By Topic</button>
         </div>
       </div>
     </div>
   </div>
 </header>
 
-<div class="mode-desc" id="mode-desc">
-  <span class="mode-desc-text" id="mode-desc-text">
-    <strong>Theory &amp; Practice:</strong> Lectures and labs in separate trees — study theory first, then apply in the lab.
-  </span>
-  <span class="pending-note">⚠ = link not yet added</span>
-</div>
-
 <main>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
-    <input type="text" id="tree-search" placeholder="Search topics, lectures, labs..." autocomplete="off" />
+    <input type="text" id="tree-search" placeholder="Search lectures..." autocomplete="off" />
   </div>
-
-  <!-- Mode 3 filter bar -->
-  <div class="filter-bar" id="filter-bar">
-    <span class="filter-label">SHOW:</span>
-    <button class="filter-chip active" data-type="all">All Resources</button>
-    <button class="filter-chip" data-type="video">▶ Videos</button>
-    <button class="filter-chip" data-type="slides">◈ Slides</button>
-    <button class="filter-chip" data-type="lab">⚙ Lab PDFs</button>
-    <button class="filter-chip" data-type="mooc">◉ MOOC</button>
-  </div>
-
   <ul class="tree" id="tree-root"></ul>
 </main>
 
-<footer>
-  Source: <a href="https://www.master-micro.com/professional-courses/analog-ic-design" target="_blank">master-micro.com</a>
-  &nbsp;·&nbsp; Add links: find <code>href: null</code> in <code>TREE_DATA</code> and replace with the URL.
-</footer>
+<footer>Master Micro · Cairo University · Multi-Instructor Learning Platform</footer>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  SHARED RESOURCE CONSTANTS
-// ═══════════════════════════════════════════════════════════════
-const SLIDES_FOLDER = 'https://drive.google.com/drive/folders/1OWcbg8f48_ilr8jptdFEA3nbNeQyD0Hi';
-const LABS_FOLDER_C = 'https://drive.google.com/drive/folders/1bVQrHuBM_Zyx9GM0jdYwGqFmFIBjb9Fk';
-const LABS_FOLDER_X = 'https://drive.google.com/open?id=1UBvVOz9tSnk1s0O4Efii5mqrEIBP3fwQ&usp=drive_fs';
-const MOOC_PT1      = 'https://maharatech.gov.eg/enrol/index.php?id=14';
-const MOOC_PT2      = 'https://maharatech.gov.eg/course/view.php?id=42';
-const MOOC_LABS     = 'https://maharatech.gov.eg/course/view.php?id=2371';
-const ADT           = 'https://adt.master-micro.com';
+const SLIDES = 'https://drive.google.com/drive/folders/1OWcbg8f48_ilr8jptdFEA3nbNeQyD0Hi';
 
-// ── PASTE INDIVIDUAL VIDEO LINKS HERE ──────────────────────────
-const VID = {
-  lec01: null, lec02: null, lec03: null, lec04: null, lec05: null,
-  lec06: null, lec07: null, lec08: null, lec09: null, lec10: null,
-  lec11: null, lec12: null, lec13: null, lec14: null, lec15: null,
-  lec16: null, lec17: null, lec18: null, lec19: null, lec20: null,
-  lec21: null, lec22: null, lec23: null,
-};
-
-// ── PASTE INDIVIDUAL LAB PDF LINKS HERE ────────────────────────
-const LAB = {
-  lab01a: null, lab01b: null, lab02: null, lab03: null, lab04: null,
-  lab05:  null, lab06:  null, lab07: null, lab08: null, lab09: null,
-  lab10:  null, lab11:  null,
-};
-
-// ═══════════════════════════════════════════════════════════════
-//  ATOMIC DATA — each lecture and lab as a self-contained object
-//  topicKey: used to group lecture+lab in "By Topic" mode
-// ═══════════════════════════════════════════════════════════════
-const LECTURES = [
-  {
-    id:'lec01', topicKey:'intro',
-    title:'Lecture 01: Introduction',
-    detail:'IC design flow overview, CMOS technology context, why analog design matters in modern SoCs.',
-    topics:['IC design flow','CMOS overview','Analog vs. digital','Course roadmap'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/Ucgx0BM4vWo?si=-ccdEuztiCtrJsH8', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/Yh73WcV6Q3g?si=6LuEqGx59EtSUjeR', type:'video'},
-      {label:'◈ Slides',    href:SLIDES_FOLDER,  type:'slides'},
-      {label:'◉ MOOC Pt.1', href:MOOC_PT1,       type:'mooc'},
-    ]
-  },
-  {
-    id:'lec02', topicKey:'circuits_review',
-    title:'Lecture 02: Circuits & Systems Review',
-    detail:'Transfer functions, Bode plots, two-port models, Thevenin/Norton, feedback basics.',
-    topics:['Transfer functions','Bode plots','Two-port models','Thevenin/Norton'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/lsItLA5LgDw?si=ILvR1lgzmPwmL7HE', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/s6-yGL-kmbE?si=EOgXXVr3RUjX0H9j', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec03', topicKey:'semiconductors',
-    title:'Lecture 03: Semiconductors Review',
-    detail:'Drift & diffusion, pn-junction, MOSFET structure, threshold voltage.',
-    topics:['Drift & diffusion','pn-junction','MOSFET structure','Threshold voltage'],
-    resources:[
-      {label:'▶ Video',  href:'https://youtu.be/7BhUJrTkziA?si=T4Dq-uJaoUN2XF0U', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec04', topicKey:'mosfet_large',
-    title:'Lecture 04: MOSFET Large Signal Model',
-    detail:'Triode vs. saturation, channel-length modulation, body effect, I-V equations.',
-    topics:['Triode region','Saturation region','Channel-length modulation','Body effect'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/SsDyOhxlKds?si=bMSZcNCVifU2Sh0S', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/-BeABAzN5lo?si=HxQkZ6OW0nz4YUfg', type:'video'},
-      {label:'▶ Video Pt.3', href:'https://youtu.be/VXNCL9T6_Ig?si=idtrlFHks8yQGdqn', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec05', topicKey:'mosfet_small',
-    title:'Lecture 05: MOSFET Small Signal Model',
-    detail:'Linearized model around quiescent point. gm, gds, Cgs, Cgd. Hybrid-π model.',
-    topics:['gm','gds / ro','Cgs / Cgd','Hybrid-π model'],
-    resources:[
-      {label:'▶ Video',  href:'https://youtu.be/YfX453RU5i0?si=Y70Vo3uEEw8mv2uh', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec06', topicKey:'single_stage',
-    title:'Lecture 06: Single-Stage CMOS Amplifiers',
-    detail:'CS, CD (source follower), CG topologies — gain, input/output impedance.',
-    topics:['CS amplifier','CD / source follower','CG amplifier','I/O impedance'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/7C704t4BqmI?si=xIqxTdny_6nwUVIZ', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/jR8xbJ715O4?si=BGgkx458hUh_7F18', type:'video'},
-      {label:'▶ Video Pt.3', href:'https://youtu.be/v1PhyCSfzNk?si=B_2OAxIksdvu3FFp', type:'video'},
-      {label:'▶ Video Pt.4', href:'https://youtu.be/JLf-oJ2Aj9Q?si=vFitvQzAVVtb_3a6', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec07', topicKey:'cascode',
-    title:'Lecture 07: Cascode Amplifiers',
-    detail:'Gain boosting, telescopic vs. folded cascode, active cascode loads.',
-    topics:['Telescopic cascode','Folded cascode','Active cascode load','Output resistance'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/gyrMe4hfZzM?si=zA9fPF-Wh5wY_tJr', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/HXzTixnhOU0?si=2sMyW_nzNkg2uRP6', type:'video'},
-      {label:'▶ Video Pt.3', href:'https://youtu.be/QiZnWyOg7go?si=cgRBhom4abUUhB7N', type:'video'},
-      {label:'▶ Video Pt.4', href:'https://youtu.be/dvd9TBZFL7E?si=K7xIPc7JFX91lJuR', type:'video'},
-      {label:'▶ Video Pt.5', href:'https://youtu.be/Pq9BxkoefK4?si=47ItnTfBC5Y0fRv6', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec08', topicKey:'freq_resp',
-    title:'Lecture 08: Frequency Response (1)',
-    detail:'HF MOSFET model, Miller approximation, dominant-pole approach, fT and fmax.',
-    topics:['HF MOSFET model','Miller approximation','Dominant pole','fT','fmax'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/FuMJMQHXkQI?si=HxkKSNah_n4zXVK_', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/cmIKU1PTyuc?si=HNN-Cy2eN3VPMHdm', type:'video'},
-      {label:'▶ Video Pt.3', href:'https://youtu.be/5VMiqN4HQpo?si=AoL6N1wjX1e2wEwm', type:'video'},
-      {label:'▶ Video Pt.4', href:'https://youtu.be/R_HmG-h0bdk?si=n2aFFK67-NY479RK', type:'video'},
-      {label:'▶ Video Pt.5', href:'https://youtu.be/DndX0HAoPC8?si=V_wI86diBZAhVGQL', type:'video'},
-      {label:'▶ Video Pt.6', href:'https://youtu.be/ICn2dw4NvtI?si=misCY55NUaRW9cgD', type:'video'},
-      {label:'▶ Video Pt.7', href:'https://youtu.be/PLC1OtY9_tI?si=Cm5x4oEZdKp-C7p2', type:'video'},
-      {label:'▶ Video Pt.8', href:'https://youtu.be/Y3asc1R8Z4o?si=n1IKB1E00eUPwdin', type:'video'},
-      {label:'▶ Video Pt.9', href:'https://youtu.be/iQx4PPVLC_M?si=m0u_QgALpDTcEF-8', type:'video'},
-      {label:'▶ Video Pt.10', href:'https://youtu.be/K4pND3Y924I?si=Mb1MI613y-z5NNUQ', type:'video'},
-      {label:'▶ Video Pt.11', href:'https://youtu.be/fDDRVhCdhu4?si=dqAYQsCXlNg2U5mI', type:'video'},
-      {label:'▶ Video Pt.12', href:'https://youtu.be/dlgTiigW7TM?si=AU9IBG2I0qywBemj', type:'video'},
-      {label:'▶ Video Pt.13', href:'https://youtu.be/yR8AMoaw9MU?si=CQKv4h4prh-xMrpe', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec09', topicKey:'freq_resp',
-    title:'Lecture 09: Frequency Response (2)',
-    detail:'Open-circuit time constants (OCTC), second-pole estimation, GBW product.',
-    topics:['OCTC method','Second pole','GBW product','Bandwidth tradeoffs'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/SLfIH6hYpew?si=nYjmcwn_9PWhh6YV', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/EouHsC3uRvE?si=VPHGn6b-uahE-22a', type:'video'},
-      {label:'▶ Video Pt.3', href:'https://youtu.be/zU0RLHeBs0I?si=PGhQ3-ls_dmjcPz5', type:'video'},
-      {label:'▶ Video Pt.4', href:'https://youtu.be/LHKepbfBNqA?si=2MUhgZCMwgCCkkkb', type:'video'},
-      {label:'▶ Video Pt.5', href:'https://youtu.be/TKJGSBye-2o?si=Ve_vnuZ71s4vc9i2', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec10', topicKey:'current_mirrors',
-    title:'Lecture 10: Current Mirrors',
-    detail:'Basic mirror, systematic offset, cascode mirror, wide-swing (low-compliance) cascode.',
-    topics:['Basic mirror','Systematic offset','Cascode mirror','Wide-swing'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/C3-ZucE-H68?si=LXSjK3oArOmduPYr', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/uG2UAY9gQUI?si=74-Sbl68ebBBksup', type:'video'},
-      {label:'▶ Video Pt.3', href:'https://youtu.be/cU5zm6MP8nQ?si=M_dr6PXlFLf-dFCl', type:'video'},
-      {label:'▶ Video Pt.4', href:'https://youtu.be/TZZUm_kgMLo?si=WtYmTw744mWf4VxE', type:'video'},
-      {label:'▶ Video Pt.5', href:'https://youtu.be/M9e0YmUGa14?si=jTuBt9p_qbNmPJUc', type:'video'},
-      {label:'▶ Video Pt.6', href:'https://youtu.be/0WQLLah11TQ?si=sKZtTASycNoSBTCw', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec11', topicKey:'diff_amp',
-    title:'Lecture 11: Differential Amplifier',
-    detail:'Half-circuit analysis, CMRR derivation, common-mode input range, tail-current matching.',
-    topics:['Diff pair','Half-circuit','CMRR','CM input range','Tail current'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/8DnIR4LvNJ4?si=NPpK2OyL9--Q_GJk', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/DwwWpsmCg-4?si=UJCVR3Q6ikwxtKax', type:'video'},
-      {label:'▶ Video Pt.3', href:'https://youtu.be/FUGQ3mszJV4?si=mnsppUlVrI98NQ0w', type:'video'},
-      {label:'▶ Video Pt.4', href:'https://youtu.be/6NWK2Up3L4o?si=VhIhCawwdsbriEZw', type:'video'},
-      {label:'▶ Video Pt.5', href:'https://youtu.be/GvsD1inzaYg?si=zt2Ysg_lZgd0XsM4', type:'video'},
-      {label:'▶ Video Pt.6', href:'https://youtu.be/1rv18G5un5Y?si=R-9sxVU7WlQdjIaS', type:'video'},
-      {label:'◈ Slides',    href:SLIDES_FOLDER, type:'slides'},
-      {label:'◉ MOOC Pt.2', href:MOOC_PT2,  type:'mooc'},
-    ]
-  },
-  {
-    id:'lec12', topicKey:'ota5t',
-    title:'Lecture 12: Five-Transistor OTA',
-    detail:'5T OTA topology, gain expression, output impedance, GBW.',
-    topics:['5T topology','Gain expression','Output impedance','GBW'],
-    resources:[
-      {label:'▶ Video Pt.1', href:'https://youtu.be/At_Rv-EoX7A?si=rm9gJBuHO89p6RlV', type:'video'},
-      {label:'▶ Video Pt.2', href:'https://youtu.be/FwTpFZ2EN30?si=mGfipYe-n6DKG0X7', type:'video'},
-      {label:'▶ Video Pt.3', href:'https://youtu.be/LE8YSuCIPQI?si=oUeBBDvnQOuYRfzH', type:'video'},
-      {label:'▶ Video Pt.4', href:'https://youtu.be/xWwi-IAQ7Wc?si=72DgLFjDprqSoNDV', type:'video'},
-      {label:'▶ Video Pt.5', href:'https://youtu.be/RzAY5KHjwxc?si=IS6pwqSeg6WXvD2l', type:'video'},
-      {label:'▶ Video Pt.5B', href:'https://youtu.be/ka1MDIhluCI?si=m-yWjXY8zjaSxBNy', type:'video'},
-      {label:'▶ Video Pt.6', href:'https://youtu.be/lPKDojgIyRM?si=89_YBek4koRm5gAN', type:'video'},
-      {label:'▶ Video Pt.7', href:'https://youtu.be/SuwamHxmHzc?si=0DZ2_7e16SHjW4Yq', type:'video'},
-      {label:'▶ Video Pt.8', href:'https://youtu.be/Te2IjHhVBfU?si=jjgu5SHM83B0Gfhq', type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec13a', topicKey:'gmid',
-    title:'Lecture 13A: gm/ID Design Methodology',
-    sub:'MaharaTech MOOC',
-    detail:'Technology-independent sizing, inversion coefficient, gm/ID vs IC curves.',
-    topics:['gm/ID ratio','Inversion coefficient IC','Design charts','Sizing workflow'],
-    resources:[
-      {label:'◉ MOOC', href:MOOC_PT2, type:'mooc'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec13b', topicKey:'gmid',
-    title:'Lecture 13B: gm/ID Design Methodology',
-    sub:'Dr. Hesham Omran',
-    detail:'Technology-independent sizing, inversion coefficient, gm/ID vs IC curves.',
-    topics:['gm/ID ratio','Inversion coefficient IC','Design charts','Sizing workflow'],
-    resources:[
-      {label:'▶ Video',  href:null,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec14', topicKey:'ota_design',
-    title:'Lecture 14: OTA Design Example',
-    detail:'End-to-end 5T OTA design: spec → gm/ID charts → transistor sizing → simulation.',
-    topics:['Spec translation','gm/ID charts','Transistor sizing','Simulation verification'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec14,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec15', topicKey:'feedback',
-    title:'Lecture 15: Negative Feedback',
-    detail:'Four feedback topologies, loop-gain analysis, gain desensitization, BW extension.',
-    topics:['Series-shunt','Shunt-series','Loop gain T','Desensitization'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec15,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec16', topicKey:'stability',
-    title:'Lecture 16: OTA Stability & Compensation',
-    detail:'Phase/gain margin, Miller compensation, pole splitting, RHP zero, nulling resistor.',
-    topics:['Phase margin PM','Gain margin GM','Miller Cc','Pole splitting','RHP zero'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec16,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec17', topicKey:'noise',
-    title:'Lecture 17: Noise (1)',
-    detail:'Thermal, shot, flicker noise sources. Power spectral density. MOSFET noise models.',
-    topics:['Thermal noise','Shot noise','Flicker / 1/f','PSD','MOSFET noise model'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec17,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec18', topicKey:'noise',
-    title:'Lecture 18: Noise (2)',
-    detail:'Input-referred noise, noise figure, noise in differential pairs and OTAs.',
-    topics:['Input-referred noise','Noise figure NF','Diff pair noise','OTA noise'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec18,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec19', topicKey:'ota_topologies',
-    title:'Lecture 19: OTA Topologies',
-    detail:'Folded cascode, telescopic, current-mirror, recycling FC OTAs — trade-offs.',
-    topics:['FC OTA','Telescopic OTA','CM OTA','RFC OTA','Gain-BW tradeoffs'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec19,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec20', topicKey:'cmfb',
-    title:'Lecture 20: Common-Mode Feedback (CMFB)',
-    detail:'CMFB necessity in FD OTAs, capacitive CMFB, resistive CMFB, CMFB loop stability.',
-    topics:['FD OTA','CM output shift','Capacitive CMFB','Resistive CMFB','CMFB stability'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec20,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec21', topicKey:'slew_psrr',
-    title:'Lecture 21: Slew Rate & PSRR',
-    detail:'Large-signal slew-rate limit in OTAs, PSRR+ and PSRR−, supply noise coupling.',
-    topics:['Slew rate SR','PSRR+','PSRR−','Supply coupling'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec21,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec22', topicKey:'mismatch',
-    title:'Lecture 22: Variability & Mismatch',
-    detail:'Pelgrom mismatch model, Monte Carlo simulation, worst-case corner analysis, yield.',
-    topics:['Pelgrom model','VT mismatch','Monte Carlo','Process corners','Yield'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec22,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
-  {
-    id:'lec23', topicKey:'biasing',
-    title:'Lecture 23: Biasing & References',
-    detail:'Beta-multiplier, bandgap reference, PTAT/CTAT generation, start-up circuits.',
-    topics:['Beta-multiplier','Bandgap reference','PTAT','CTAT','Start-up circuit'],
-    resources:[
-      {label:'▶ Video',  href:VID.lec23,     type:'video'},
-      {label:'◈ Slides', href:SLIDES_FOLDER, type:'slides'},
-    ]
-  },
+const LECTURES_HESHAM = [
+  {id:'lec01',instructor:'hesham',topicKey:'intro',title:'Lecture 01: Introduction',videos:[{label:'Pt.1',href:'https://youtu.be/Ucgx0BM4vWo?si=-ccdEuztiCtrJsH8'},{label:'Pt.2',href:'https://youtu.be/Yh73WcV6Q3g?si=6LuEqGx59EtSUjeR'}],slides:SLIDES},
+  {id:'lec02',instructor:'hesham',topicKey:'circuits',title:'Lecture 02: Circuits & Systems',videos:[{label:'Pt.1',href:'https://youtu.be/lsItLA5LgDw?si=ILvR1lgzmPwmL7HE'},{label:'Pt.2',href:'https://youtu.be/s6-yGL-kmbE?si=EOgXXVr3RUjX0H9j'}],slides:SLIDES},
+  {id:'lec03',instructor:'hesham',topicKey:'semiconductors',title:'Lecture 03: Semiconductors',videos:[{label:'Video',href:'https://youtu.be/7BhUJrTkziA?si=T4Dq-uJaoUN2XF0U'}],slides:SLIDES},
+  {id:'lec04',instructor:'hesham',topicKey:'mosfet_large',title:'Lecture 04: MOSFET Large Signal',videos:[{label:'Pt.1',href:'https://youtu.be/SsDyOhxlKds?si=bMSZcNCVifU2Sh0S'},{label:'Pt.2',href:'https://youtu.be/-BeABAzN5lo?si=HxQkZ6OW0nz4YUfg'},{label:'Pt.3',href:'https://youtu.be/VXNCL9T6_Ig?si=idtrlFHks8yQGdqn'}],slides:SLIDES},
+  {id:'lec05',instructor:'hesham',topicKey:'mosfet_small',title:'Lecture 05: MOSFET Small Signal',videos:[{label:'Video',href:'https://youtu.be/YfX453RU5i0?si=Y70Vo3uEEw8mv2uh'}],slides:SLIDES},
+  {id:'lec06',instructor:'hesham',topicKey:'single_stage',title:'Lecture 06: Single-Stage Amplifiers',videos:[{label:'Pt.1',href:'https://youtu.be/7C704t4BqmI?si=xIqxTdny_6nwUVIZ'},{label:'Pt.2',href:'https://youtu.be/jR8xbJ715O4?si=BGgkx458hUh_7F18'},{label:'Pt.3',href:'https://youtu.be/v1PhyCSfzNk?si=B_2OAxIksdvu3FFp'},{label:'Pt.4',href:'https://youtu.be/JLf-oJ2Aj9Q?si=vFitvQzAVVtb_3a6'}],slides:SLIDES},
+  {id:'lec07',instructor:'hesham',topicKey:'cascode',title:'Lecture 07: Cascode Amplifiers',videos:[{label:'Pt.1',href:'https://youtu.be/gyrMe4hfZzM?si=zA9fPF-Wh5wY_tJr'},{label:'Pt.2',href:'https://youtu.be/HXzTixnhOU0?si=2sMyW_nzNkg2uRP6'},{label:'Pt.3',href:'https://youtu.be/QiZnWyOg7go?si=cgRBhom4abUUhB7N'},{label:'Pt.4',href:'https://youtu.be/dvd9TBZFL7E?si=K7xIPc7JFX91lJuR'},{label:'Pt.5',href:'https://youtu.be/Pq9BxkoefK4?si=47ItnTfBC5Y0fRv6'}],slides:SLIDES},
+  {id:'lec08',instructor:'hesham',topicKey:'freq_resp',title:'Lecture 08: Frequency Response (1)',videos:[{label:'Pt.1',href:'https://youtu.be/FuMJMQHXkQI?si=HxkKSNah_n4zXVK_'},{label:'Pt.2',href:'https://youtu.be/cmIKU1PTyuc?si=HNN-Cy2eN3VPMHdm'},{label:'Pt.3',href:'https://youtu.be/5VMiqN4HQpo?si=AoL6N1wjX1e2wEwm'},{label:'Pt.4',href:'https://youtu.be/R_HmG-h0bdk?si=n2aFFK67-NY479RK'},{label:'Pt.5',href:'https://youtu.be/DndX0HAoPC8?si=V_wI86diBZAhVGQL'},{label:'Pt.6',href:'https://youtu.be/ICn2dw4NvtI?si=misCY55NUaRW9cgD'},{label:'Pt.7',href:'https://youtu.be/PLC1OtY9_tI?si=Cm5x4oEZdKp-C7p2'},{label:'Pt.8',href:'https://youtu.be/Y3asc1R8Z4o?si=n1IKB1E00eUPwdin'},{label:'Pt.9',href:'https://youtu.be/iQx4PPVLC_M?si=m0u_QgALpDTcEF-8'},{label:'Pt.10',href:'https://youtu.be/K4pND3Y924I?si=Mb1MI613y-z5NNUQ'},{label:'Pt.11',href:'https://youtu.be/fDDRVhCdhu4?si=dqAYQsCXlNg2U5mI'},{label:'Pt.12',href:'https://youtu.be/dlgTiigW7TM?si=AU9IBG2I0qywBemj'},{label:'Pt.13',href:'https://youtu.be/yR8AMoaw9MU?si=CQKv4h4prh-xMrpe'}],slides:SLIDES},
+  {id:'lec09',instructor:'hesham',topicKey:'freq_resp',title:'Lecture 09: Frequency Response (2)',videos:[{label:'Pt.1',href:'https://youtu.be/SLfIH6hYpew?si=nYjmcwn_9PWhh6YV'},{label:'Pt.2',href:'https://youtu.be/EouHsC3uRvE?si=VPHGn6b-uahE-22a'},{label:'Pt.3',href:'https://youtu.be/zU0RLHeBs0I?si=PGhQ3-ls_dmjcPz5'},{label:'Pt.4',href:'https://youtu.be/LHKepbfBNqA?si=2MUhgZCMwgCCkkkb'},{label:'Pt.5',href:'https://youtu.be/TKJGSBye-2o?si=Ve_vnuZ71s4vc9i2'}],slides:SLIDES},
+  {id:'lec10',instructor:'hesham',topicKey:'current_mirrors',title:'Lecture 10: Current Mirrors',videos:[{label:'Pt.1',href:'https://youtu.be/C3-ZucE-H68?si=LXSjK3oArOmduPYr'},{label:'Pt.2',href:'https://youtu.be/uG2UAY9gQUI?si=74-Sbl68ebBBksup'},{label:'Pt.3',href:'https://youtu.be/cU5zm6MP8nQ?si=M_dr6PXlFLf-dFCl'},{label:'Pt.4',href:'https://youtu.be/TZZUm_kgMLo?si=WtYmTw744mWf4VxE'},{label:'Pt.5',href:'https://youtu.be/M9e0YmUGa14?si=jTuBt9p_qbNmPJUc'},{label:'Pt.6',href:'https://youtu.be/0WQLLah11TQ?si=sKZtTASycNoSBTCw'}],slides:SLIDES},
+  {id:'lec11',instructor:'hesham',topicKey:'diff_amp',title:'Lecture 11: Differential Amplifier',videos:[{label:'Pt.1',href:'https://youtu.be/8DnIR4LvNJ4?si=NPpK2OyL9--Q_GJk'},{label:'Pt.2',href:'https://youtu.be/DwwWpsmCg-4?si=UJCVR3Q6ikwxtKax'},{label:'Pt.3',href:'https://youtu.be/FUGQ3mszJV4?si=mnsppUlVrI98NQ0w'},{label:'Pt.4',href:'https://youtu.be/6NWK2Up3L4o?si=VhIhCawwdsbriEZw'},{label:'Pt.5',href:'https://youtu.be/GvsD1inzaYg?si=zt2Ysg_lZgd0XsM4'},{label:'Pt.6',href:'https://youtu.be/1rv18G5un5Y?si=R-9sxVU7WlQdjIaS'}],slides:SLIDES},
+  {id:'lec12',instructor:'hesham',topicKey:'ota5t',title:'Lecture 12: Five-Transistor OTA',videos:[{label:'Pt.1',href:'https://youtu.be/At_Rv-EoX7A?si=rm9gJBuHO89p6RlV'},{label:'Pt.2',href:'https://youtu.be/FwTpFZ2EN30?si=mGfipYe-n6DKG0X7'},{label:'Pt.3',href:'https://youtu.be/LE8YSuCIPQI?si=oUeBBDvnQOuYRfzH'},{label:'Pt.4',href:'https://youtu.be/xWwi-IAQ7Wc?si=72DgLFjDprqSoNDV'},{label:'Pt.5',href:'https://youtu.be/RzAY5KHjwxc?si=IS6pwqSeg6WXvD2l'},{label:'Pt.5B',href:'https://youtu.be/ka1MDIhluCI?si=m-yWjXY8zjaSxBNy'},{label:'Pt.6',href:'https://youtu.be/lPKDojgIyRM?si=89_YBek4koRm5gAN'},{label:'Pt.7',href:'https://youtu.be/SuwamHxmHzc?si=0DZ2_7e16SHjW4Yq'},{label:'Pt.8',href:'https://youtu.be/Te2IjHhVBfU?si=jjgu5SHM83B0Gfhq'}],slides:SLIDES},
+  {id:'lec13a',instructor:'hesham',topicKey:'gmid',title:'Lecture 13A: gm/ID Design',sub:'MaharaTech MOOC',videos:[],slides:'https://maharatech.gov.eg/course/view.php?id=42'},
+  {id:'lec13b',instructor:'hesham',topicKey:'gmid',title:'Lecture 13B: gm/ID Design',sub:"Dr. Hesham's Channel",videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec14',instructor:'hesham',topicKey:'ota_design',title:'Lecture 14: OTA Design Example',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec15',instructor:'hesham',topicKey:'feedback',title:'Lecture 15: Feedback',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec16',instructor:'hesham',topicKey:'stability',title:'Lecture 16: Stability & Compensation',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec17',instructor:'hesham',topicKey:'noise',title:'Lecture 17: Noise',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec18',instructor:'hesham',topicKey:'ota_topologies',title:'Lecture 18: OTA Topologies',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec19',instructor:'hesham',topicKey:'cmfb',title:'Lecture 19: Common-Mode Feedback',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec20',instructor:'hesham',topicKey:'slew_psrr',title:'Lecture 20: Slew Rate & PSRR',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec21',instructor:'hesham',topicKey:'mismatch',title:'Lecture 21: Mismatch & Offset',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec22',instructor:'hesham',topicKey:'biasing',title:'Lecture 22: Biasing Circuits',videos:[{label:'Video',href:null}],slides:SLIDES},
+  {id:'lec23',instructor:'hesham',topicKey:'design_ex',title:'Lecture 23: Advanced Design Examples',videos:[{label:'Video',href:null}],slides:SLIDES},
 ];
 
-const LABS = [
-  {
-    id:'lab01a', topicKey:'circuits_review',
-    title:'Lab 01 (Part 1): RC Circuit Simulations',
-    detail:'Transient, AC, pole-zero simulations, parametric sweeps, calculator expressions in Cadence/Xschem.',
-    topics:['Transient sim','AC sim','Pole-zero sim','Parametric sweep','Calculator expressions'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab01a, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab01a, type:'lab'},
-    ]
-  },
-  {
-    id:'lab01b', topicKey:'mosfet_large',
-    title:'Lab 01 (Part 2): MOSFET Characterization',
-    detail:'DC sweeps: ID-VGS, gm-VGS, ID-VDS for long- and short-channel devices.',
-    topics:['ID-VGS sweep','gm-VGS','ID-VDS','Short-channel effects'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab01b, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab01b, type:'lab'},
-    ]
-  },
-  {
-    id:'lab02', topicKey:'single_stage',
-    title:'Lab 02: Common-Source Amplifier',
-    detail:'Design charts, OP simulation, gain non-linearity, max attainable gain, gain linearization.',
-    topics:['Design charts','OP simulation','Gain non-linearity','Max gain','Linearization'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab02, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab02, type:'lab'},
-    ]
-  },
-  {
-    id:'lab03', topicKey:'cascode',
-    title:'Lab 03: Cascode Amplifier',
-    detail:'Cascode with active/resistive load. Effect on gain, BW, GBW.',
-    topics:['Active load','Resistive load','Cascode gain','BW','GBW'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab03, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab03, type:'lab'},
-    ]
-  },
-  {
-    id:'lab04', topicKey:'freq_resp',
-    title:'Lab 04: Frequency Response of CD Buffer',
-    detail:'Complex poles, frequency-domain peaking, time-domain ringing, inductive rise.',
-    topics:['Complex poles','Frequency peaking','Time-domain ringing','Inductive rise'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab04, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab04, type:'lab'},
-    ]
-  },
-  {
-    id:'lab05', topicKey:'current_mirrors',
-    title:'Lab 05: Current Mirrors',
-    detail:'Simple, cascode, wide-swing current mirror characterization. Compliance voltage.',
-    topics:['Simple mirror','Cascode mirror','Wide-swing mirror','Compliance voltage'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab05, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab05, type:'lab'},
-    ]
-  },
-  {
-    id:'lab06', topicKey:'diff_amp',
-    title:'Lab 06: Differential Amplifier',
-    detail:'Differential gain, CM gain, CMRR, CM input range, large-signal operation.',
-    topics:['Differential gain','CM gain','CMRR','CM input range','Large-signal'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab06, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab06, type:'lab'},
-    ]
-  },
-  {
-    id:'lab07', topicKey:'ota_design',
-    title:'Lab 07: OTA Design',
-    detail:'gm/ID design charts, 5T OTA design procedure, open-loop and closed-loop simulation.',
-    topics:['gm/ID charts','5T design procedure','Open-loop sim','Closed-loop sim'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab07, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab07, type:'lab'},
-    ]
-  },
-  {
-    id:'lab08', topicKey:'feedback',
-    title:'Lab 08: Negative Feedback',
-    detail:'Behavioral modeling, hierarchy editor, effect of feedback on gain/BW/GBW, loop-gain.',
-    topics:['Behavioral model','Hierarchy editor','Loop gain','Gain/BW under feedback'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab08, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab08, type:'lab'},
-    ]
-  },
-  {
-    id:'lab09', topicKey:'noise',
-    title:'Lab 09 · Mini Project 01: Two-Stage Miller OTA',
-    detail:'Full 2-stage Miller OTA design: gm/ID sizing, Miller compensation, RHP zero, verification.',
-    topics:['Two-stage OTA','Miller Cc','RHP zero','Nulling resistor','Verification'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab09, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab09, type:'lab'},
-    ]
-  },
-  {
-    id:'lab10', topicKey:'noise',
-    title:'Lab 10: Noise Simulation',
-    detail:'AC noise simulation, transient noise, noise contribution in five-transistor OTA.',
-    topics:['AC noise sim','Transient noise','Noise contribution','Cadence noise analysis'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab10, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab10, type:'lab'},
-    ]
-  },
-  {
-    id:'lab11', topicKey:'cmfb',
-    title:'Lab 11 · Mini Project 02: FD Folded Cascode OTA',
-    detail:'Fully-differential FC OTA with capacitive feedback. Behavioral and actual CMFB.',
-    topics:['FD FC OTA','Cap CMFB','Behavioral CMFB','Full design flow','Monte Carlo'],
-    resources:[
-      {label:'⚙ PDF (Cadence)', href:LAB.lab11, type:'lab'},
-      {label:'⚙ PDF (Xschem)',  href:LAB.lab11, type:'lab'},
-    ]
-  },
+const LECTURES_YOUSSEF = [
+  {id:'y_freq',instructor:'youssef',topicKey:'freq_resp',title:'Frequency Response',videos:[{label:'Part 1',href:'https://youtu.be/iJr7uilpSk8?si=CX868dARlFlm6dz7'},{label:'Part 2',href:'https://youtu.be/yDZpNx7dpCk?si=lhBKKL-OdU_8FlA1'},{label:'Part 3',href:'https://youtu.be/mWG8aXcP6x0?si=B2RV2VXbc6vSoiSI'},{label:'Part 4',href:'https://youtu.be/EVDZfyxgFiY?si=gA8bUpyBLG5AumOV'},{label:'Part 5',href:'https://youtu.be/I1jP8KCZUKA?si=gA8bUpyBLG5AumOV'},{label:'Part 6',href:'https://youtu.be/_AgVLosYig8?si=AEp1hjx5IRbQfqGs'}],slides:null},
+  {id:'y_diff5t',instructor:'youssef',topicKey:'diff_amp',title:'Differential Amplifier & 5T OTA',videos:[{label:'Part 1',href:'https://youtu.be/DiqeyeDK7Kw?si=B2RV2VXbc6vSoiSI'},{label:'Part 2',href:'https://youtu.be/5lTEbmP6ojE?si=lhBKKL-OdU_8FlA1'},{label:'Part 3',href:'https://youtu.be/UW4CkRrBRyk?si=B2RV2VXbc6vSoiSI'},{label:'Part 4 (till 35:40)',href:'https://youtu.be/YNLfrxUCHaA?si=o-vCeDHMG-lpN4kj'}],slides:null},
 ];
 
-// Topic group metadata (for "By Topic" mode ordering & titles)
-const TOPIC_META = {
-  intro:          {title:'Introduction',                   order:1},
-  circuits_review:{title:'Circuits & Systems Review',      order:2},
-  semiconductors: {title:'Semiconductors Review',          order:3},
-  mosfet_large:   {title:'MOSFET Large Signal Model',      order:4},
-  mosfet_small:   {title:'MOSFET Small Signal Model',      order:5},
-  single_stage:   {title:'Single-Stage Amplifiers',        order:6},
-  cascode:        {title:'Cascode Amplifiers',             order:7},
-  freq_resp:      {title:'Frequency Response',             order:8},
-  current_mirrors:{title:'Current Mirrors',                order:9},
-  diff_amp:       {title:'Differential Amplifier',         order:10},
-  ota5t:          {title:'Five-Transistor OTA',            order:11},
-  gmid:           {title:'gm/ID Design Methodology',       order:12},
-  ota_design:     {title:'OTA Design Example',             order:13},
-  feedback:       {title:'Negative Feedback',              order:14},
-  stability:      {title:'Stability & Compensation',       order:15},
-  noise:          {title:'Noise Analysis',                 order:16},
-  ota_topologies: {title:'OTA Topologies',                 order:17},
-  cmfb:           {title:'Common-Mode Feedback (CMFB)',    order:18},
-  slew_psrr:      {title:'Slew Rate & PSRR',               order:19},
-  mismatch:       {title:'Variability & Mismatch',         order:20},
-  biasing:        {title:'Biasing & References',           order:21},
-};
+let currentInstructor = 'hesham';
+let currentMode = 'split';
+let currentCourse = 1;
 
-const RESOURCES_NODE = {
-  id:'res_hub', topicKey:null,
-  title:'Resources Hub',
-  sub:'All master links in one place',
-  children:[
-    {id:'res_vids',   title:'Lecture Video Playlists', detail:'Both YouTube playlists covering all 23 lectures. Free, no login required.',
-     topics:['YouTube','Part 1: Lec 01–14','Part 2: Lec 11–23'],
-     resources:[
-       {label:'▶ Playlist Pt.1', href:'https://www.youtube.com/playlist?list=PLMSBalys69yzp1vrmnYAmpRFiptbuGuaj', type:'video'},
-       {label:'▶ Playlist Pt.2', href:'https://www.youtube.com/playlist?list=PLMSBalys69yxQrKE_46AYuFkthIBh-WVJ', type:'video'},
-     ]},
-    {id:'res_slides', title:'Lecture Slides (Google Drive)', detail:'Full slide decks for all lectures.',
-     topics:['PDF slides','All lectures','Google Drive'],
-     resources:[{label:'◈ Slides Folder', href:SLIDES_FOLDER, type:'slides'}]},
-    {id:'res_labs',   title:'Lab Folders (All Tools)', detail:'Cadence, Xschem+Ngspice, and Mentor toolchain lab files.',
-     topics:['Cadence','Xschem + Ngspice','Mentor'],
-     resources:[
-       {label:'⚙ Cadence', href:LABS_FOLDER_C, type:'lab'},
-       {label:'⚙ Xschem',  href:LABS_FOLDER_X, type:'lab'},
-     ]},
-    {id:'res_mooc',   title:'MaharaTech MOOC', detail:'Three structured MOOC courses with completion certificate.',
-     topics:['MaharaTech','Certificate','Pt.1 · Pt.2 · Labs'],
-     resources:[
-       {label:'◉ MOOC Pt.1', href:MOOC_PT1,  type:'mooc'},
-       {label:'◉ MOOC Pt.2', href:MOOC_PT2,  type:'mooc'},
-       {label:'◉ MOOC Labs', href:MOOC_LABS, type:'mooc'},
-     ]},
-    {id:'res_adt',    title:"Analog Designer's Toolbox (ADT)", detail:"Master Micro's gm/ID EDA tool. Free academic license.",
-     topics:['gm/ID tool','Free academic license'],
-     resources:[{label:'↗ ADT Website', href:ADT, type:'mooc'}]},
-  ]
-};
-
-// ═══════════════════════════════════════════════════════════════
-//  YOUTUBE TITLE FETCHER
-// ═══════════════════════════════════════════════════════════════
-const titleCache = {};
-
-async function fetchYouTubeTitle(url) {
-  if (!url || !url.includes('youtube') && !url.includes('youtu.be')) return null;
-  if (titleCache[url]) return titleCache[url];
-
-  try {
-    const response = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
-    const data = await response.json();
-    const title = data.title || null;
-    if (title) titleCache[url] = title;
-    return title;
-  } catch (e) {
-    console.log('Could not fetch title for', url);
-    return null;
-  }
-}
-
-// Fetch all video titles on page load
-async function loadVideoTitles() {
-  const items = document.querySelectorAll('.video-item[data-url]');
-  for (const item of items) {
-    const href = item.getAttribute('data-url');
-    const partNum = item.getAttribute('data-partnum');
-    if (href && !item.dataset.titleLoaded) {
-      const title = await fetchYouTubeTitle(href);
-      if (title) {
-        item.textContent = title;
-        item.dataset.titleLoaded = 'true';
-      } else {
-        item.textContent = `Part ${partNum}`;
-      }
-      item.classList.remove('loading');
-    }
-  }
-}
-let currentMode   = 'split';
-let currentCourse = 1;  // 1 or 2
-let activeFilter  = 'all';
-
-// Helper to check lecture/lab course membership
-function getLectureNumber(id) {
-  const match = id.match(/lec(\d+)([ab])?/);
-  return match ? parseInt(match[1]) : null;
-}
-
-function getLabNumber(id) {
-  const match = id.match(/lab(\d+)/);
-  return match ? parseInt(match[1]) : null;
-}
-
-// Analog (1): Lectures 1-14, Labs 1-7
-// Analog (2): Lectures 15-23, Labs 8-11
-function isInCourse(item, course) {
-  const lecNum = getLectureNumber(item.id);
-  const labNum = getLabNumber(item.id);
-  
-  if (lecNum) return course === 1 ? lecNum <= 14 : lecNum >= 15;
-  if (labNum) return course === 1 ? labNum <= 7 : labNum >= 8;
-  return true;
-}
-
-function getLecturesForCourse(course) {
-  return LECTURES.filter(l => isInCourse(l, course));
-}
-
-function getLabsForCourse(course) {
-  return LABS.filter(l => isInCourse(l, course));
-}
-
-const MODE_DESCS = {
-  split:    '<strong>Theory &amp; Practice:</strong> Lectures tree on top, Labs tree below — study theory, then apply in the lab.',
-  topic:    '<strong>By Topic:</strong> Each topic groups its lecture(s) and lab together — everything about Cascode is in one place.',
-  resource: '<strong>By Resource:</strong> Filter all nodes by resource type — see only videos, only lab PDFs, only MOOC links, etc.',
-};
-
-// ═══════════════════════════════════════════════════════════════
-//  TREE BUILDER
-// ═══════════════════════════════════════════════════════════════
-function makeBadges(resources, nodeName) {
-  if (!resources || !resources.length) return null;
-  const wrap = document.createElement('div');
-  wrap.className = 'badges';
-
-  // Filter out videos - they'll go in the detail panel dropdown instead
-  const otherRes = resources.filter(r => r.type !== 'video');
-
-  // Handle non-video resources (slides, labs, mooc)
-  otherRes.forEach(r => {
-    let el;
-    if (!r.href) {
-      el = document.createElement('span');
-      el.className = 'badge badge-pending';
-      el.title = 'Link not added yet';
-      el.textContent = '⚠ ' + r.label.replace(/^[▶◈⚙◉↗]\s*/,'');
-    } else {
-      el = document.createElement('a');
-      el.className = `badge badge-${r.type}`;
-      el.href = r.href; el.target = '_blank'; el.rel = 'noopener';
-      el.textContent = r.label;
-      el.setAttribute('data-rtype', r.type);
-      el.addEventListener('click', e => e.stopPropagation());
-    }
-    wrap.appendChild(el);
+document.querySelectorAll('.instructor-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inst = btn.dataset.instructor;
+    if (inst === currentInstructor) return;
+    document.querySelectorAll('.instructor-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentInstructor = inst;
+    document.body.classList.toggle('instructor-youssef', inst === 'youssef');
+    document.getElementById('course-panel').classList.toggle('hidden', inst !== 'hesham');
+    render();
   });
-
-  return wrap.children.length ? wrap : null;
-}
-
-// Build video list for detail panel (displayed directly, not in dropdown)
-function makeVideoList(resources) {
-  const videos = resources.filter(r => r.type === 'video');
-  if (!videos.length) return null;
-
-  const listWrap = document.createElement('div');
-  listWrap.className = 'videos-list';
-
-  videos.forEach((v, idx) => {
-    const item = document.createElement('a');
-    item.className = 'video-item' + (v.href ? '' : ' loading');
-    if (v.href) {
-      item.href = v.href;
-      item.target = '_blank';
-      item.rel = 'noopener';
-    } else {
-      item.style.cursor = 'default';
-      item.style.opacity = '0.5';
-    }
-    
-    const partNum = idx + 1;
-    item.textContent = `Part ${partNum}`;
-    item.dataset.url = v.href;
-    item.dataset.partnum = partNum;
-    
-    item.addEventListener('click', e => {
-      if (!v.href) e.preventDefault();
-    });
-    
-    listWrap.appendChild(item);
-  });
-
-  return listWrap;
-}
-
-function makeToggleIcon() {
-  const d = document.createElement('div');
-  d.className = 'toggle-icon';
-  d.innerHTML = `<svg viewBox="0 0 10 10"><polyline points="3,2 7,5 3,8"/></svg>`;
-  return d;
-}
-
-function buildNode(node, depth) {
-  const hasChildren = !!(node.children && node.children.length);
-  const li = document.createElement('li');
-  li.className = `tree-node depth-${depth}`;
-  li.dataset.searchText = [node.title, node.sub||'', node.detail||'', (node.topics||[]).join(' ')].join(' ').toLowerCase();
-
-  const row = document.createElement('div');
-  row.className = 'node-row' + (hasChildren ? '' : ' leaf');
-
-  row.appendChild(makeToggleIcon());
-
-  const lbl = document.createElement('div');
-  lbl.className = 'node-label';
-  lbl.innerHTML = `<span class="node-title">${node.title}</span>` +
-    (node.sub ? `<span class="node-sub">${node.sub}</span>` : '');
-  row.appendChild(lbl);
-
-  // type pill for mixed topic nodes
-  if (node._typePill) {
-    const pill = document.createElement('span');
-    pill.className = `type-pill type-pill-${node._typePill}`;
-    pill.textContent = node._typePill === 'lecture' ? 'LEC' : 'LAB';
-    row.appendChild(pill);
-  }
-
-  if (node.resources) {
-    const bw = makeBadges(node.resources, node.title);
-    if (bw) row.appendChild(bw);
-  }
-  li.appendChild(row);
-
-  // detail panel
-  if (node.detail || (node.topics && node.topics.length) || (node.resources && node.resources.some(r => r.type === 'video'))) {
-    const det = document.createElement('div');
-    det.className = 'node-detail';
-    let h = node.detail ? `<div>${node.detail}</div>` : '';
-    if (node.topics && node.topics.length)
-      h += `<div class="topics">${node.topics.map(t=>`<span class="topic-tag">${t}</span>`).join('')}</div>`;
-    det.innerHTML = h;
-    
-    // Add video list to detail panel (displayed directly, not in dropdown)
-    if (node.resources && node.resources.some(r => r.type === 'video')) {
-      const vidList = makeVideoList(node.resources);
-      if (vidList) det.appendChild(vidList);
-    }
-    
-    li.appendChild(det);
-  }
-
-  if (hasChildren) {
-    const wrap = document.createElement('div');
-    wrap.className = 'children-wrap';
-    const ul = document.createElement('ul');
-    ul.className = 'tree';
-    node.children.forEach(c => ul.appendChild(buildNode(c, depth+1)));
-    wrap.appendChild(ul);
-    li.appendChild(wrap);
-
-    row.addEventListener('click', () => {
-      const open = row.classList.toggle('open');
-      wrap.classList.toggle('open', open);
-      const det = li.querySelector(':scope > .node-detail');
-      if (det) det.classList.toggle('visible', open);
-    });
-  } else {
-    row.addEventListener('click', () => {
-      const det = li.querySelector(':scope > .node-detail');
-      if (det) {
-        const open = row.classList.toggle('open');
-        det.classList.toggle('visible', open);
-      }
-    });
-  }
-
-  return li;
-}
-
-function makeSectionHeader(title, count) {
-  const div = document.createElement('div');
-  div.className = 'section-header';
-  div.innerHTML = `${title} <span class="sh-count">${count} items</span>`;
-  return div;
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  MODE RENDERERS
-// ═══════════════════════════════════════════════════════════════
-function renderSplit() {
-  const root = document.getElementById('tree-root');
-  root.innerHTML = '';
-
-  const lecs = getLecturesForCourse(currentCourse);
-  const labs = getLabsForCourse(currentCourse);
-
-  // Lectures section
-  root.appendChild(makeSectionHeader('LECTURES', lecs.length));
-  const lecUL = document.createElement('ul'); lecUL.className = 'tree';
-  lecs.forEach(l => lecUL.appendChild(buildNode(l, 0)));
-  root.appendChild(lecUL);
-
-  // Labs section
-  root.appendChild(makeSectionHeader('LABS & MINI PROJECTS', labs.length));
-  const labUL = document.createElement('ul'); labUL.className = 'tree';
-  labs.forEach(l => labUL.appendChild(buildNode(l, 0)));
-  root.appendChild(labUL);
-
-  // Resources hub
-  root.appendChild(makeSectionHeader('RESOURCES HUB', ''));
-  const resUL = document.createElement('ul'); resUL.className = 'tree';
-  resUL.appendChild(buildNode(RESOURCES_NODE, 0));
-  root.appendChild(resUL);
-}
-
-function renderTopic() {
-  const root = document.getElementById('tree-root');
-  root.innerHTML = '';
-
-  const lecs = getLecturesForCourse(currentCourse);
-  const labs = getLabsForCourse(currentCourse);
-
-  // Group lectures and labs by topicKey
-  const groups = {};
-  lecs.forEach(l => {
-    if (!groups[l.topicKey]) groups[l.topicKey] = {lectures:[], labs:[]};
-    groups[l.topicKey].lectures.push(l);
-  });
-  labs.forEach(l => {
-    if (!groups[l.topicKey]) groups[l.topicKey] = {lectures:[], labs:[]};
-    groups[l.topicKey].labs.push(l);
-  });
-
-  // Sort by topic order
-  const sorted = Object.keys(groups).sort((a,b) =>
-    (TOPIC_META[a]?.order||99) - (TOPIC_META[b]?.order||99)
-  );
-
-  root.appendChild(makeSectionHeader('TOPICS', sorted.length));
-  const ul = document.createElement('ul'); ul.className = 'tree';
-
-  sorted.forEach(key => {
-    const meta = TOPIC_META[key] || {title: key};
-    const {lectures, labs} = groups[key];
-
-    // Collect all resources from lectures and labs for summary badge display
-    const allRes = [...lectures.flatMap(l=>l.resources||[]), ...labs.flatMap(l=>l.resources||[])];
-
-    // Build child nodes with type pill
-    const children = [
-      ...lectures.map(l => ({...l, _typePill:'lecture'})),
-      ...labs.map(l => ({...l, _typePill:'lab'})),
-    ];
-
-    const topicNode = {
-      id: `topic_${key}`,
-      title: meta.title,
-      sub: `${lectures.length} lecture${lectures.length!==1?'s':''} · ${labs.length} lab${labs.length!==1?'s':''}`,
-      resources: allRes,
-      children,
-    };
-
-    ul.appendChild(buildNode(topicNode, 0));
-  });
-
-  root.appendChild(ul);
-}
-
-function renderResource() {
-  // Same as split but we show the filter bar and apply badge filtering
-  renderSplit();
-  applyResourceFilter(activeFilter);
-}
-
-// ── Resource filter logic ───────────────────────────────────────
-function applyResourceFilter(type) {
-  activeFilter = type;
-  const allBadges = document.querySelectorAll('#tree-root .badge');
-  allBadges.forEach(b => {
-    if (type === 'all') {
-      b.classList.remove('filter-hidden');
-    } else {
-      const rtype = b.getAttribute('data-rtype') || '';
-      b.classList.toggle('filter-hidden', rtype !== type);
-    }
-  });
-
-  // Dim nodes that have no visible real badges (only pending ones)
-  document.querySelectorAll('#tree-root .tree-node').forEach(node => {
-    if (type === 'all') { node.style.opacity = ''; return; }
-    const visibleBadges = [...node.querySelectorAll(':scope > .node-row .badge:not(.filter-hidden):not(.badge-pending)')];
-    const childVisible  = [...node.querySelectorAll('.badge:not(.filter-hidden):not(.badge-pending)')];
-    node.style.opacity = (visibleBadges.length || childVisible.length) ? '' : '0.35';
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  RENDER DISPATCH
-// ═══════════════════════════════════════════════════════════════
-function render(mode) {
-  const root = document.getElementById('tree-root');
-  root.classList.add('fading');
-  setTimeout(() => {
-    if (mode === 'split')    renderSplit();
-    if (mode === 'topic')    renderTopic();
-    if (mode === 'resource') renderResource();
-    root.classList.remove('fading');
-    document.getElementById('tree-search').value = '';
-    applySearch('');
-    document.getElementById('mode-desc-text').innerHTML = MODE_DESCS[mode];
-    document.getElementById('filter-bar').classList.toggle('visible', mode === 'resource');
-    
-    // Load YouTube titles after rendering
-    setTimeout(() => loadVideoTitles(), 100);
-  }, 120);
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  SEARCH
-// ═══════════════════════════════════════════════════════════════
-function applySearch(q) {
-  const all = document.querySelectorAll('.tree-node');
-  if (!q) { all.forEach(n => n.style.display = ''); return; }
-
-  function hasMatch(el) {
-    if ((el.dataset.searchText||'').includes(q)) return true;
-    return [...el.querySelectorAll('.tree-node')].some(c => (c.dataset.searchText||'').includes(q));
-  }
-  all.forEach(n => {
-    if (hasMatch(n)) {
-      n.style.display = '';
-      let wrap = n.closest('.children-wrap');
-      while (wrap) {
-        wrap.classList.add('open');
-        const r = wrap.previousElementSibling;
-        if (r && r.classList.contains('node-row')) r.classList.add('open');
-        wrap = wrap.parentElement && wrap.parentElement.closest('.children-wrap');
-      }
-    } else {
-      n.style.display = 'none';
-    }
-  });
-}
-
-document.getElementById('tree-search').addEventListener('input', function () {
-  applySearch(this.value.trim().toLowerCase());
-  if (currentMode === 'resource') applyResourceFilter(activeFilter);
 });
-
-// ═══════════════════════════════════════════════════════════════
-//  COURSE BUTTON WIRING
-// ═══════════════════════════════════════════════════════════════
-function updateHeaderForCourse() {
-  const lecs = getLecturesForCourse(currentCourse);
-  const labs = getLabsForCourse(currentCourse);
-  const courseTitle = currentCourse === 1 ? 'Analog IC Design (1)' : 'Analog IC Design (2)';
-  
-  document.getElementById('course-subtitle').textContent = `// Master Micro · Dr. Hesham Omran · ${courseTitle}`;
-  document.getElementById('lec-count').textContent = `${lecs.length} LECTURES`;
-  document.getElementById('lab-count').textContent = `${labs.length} LABS`;
-}
 
 document.querySelectorAll('.course-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -1287,14 +218,10 @@ document.querySelectorAll('.course-btn').forEach(btn => {
     document.querySelectorAll('.course-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentCourse = course;
-    updateHeaderForCourse();
-    render(currentMode);
+    render();
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-//  MODE BUTTON WIRING
-// ═══════════════════════════════════════════════════════════════
 document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const mode = btn.dataset.mode;
@@ -1302,25 +229,122 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentMode = mode;
-    render(mode);
+    render();
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-//  FILTER CHIP WIRING (mode 3)
-// ═══════════════════════════════════════════════════════════════
-document.querySelectorAll('.filter-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    applyResourceFilter(chip.dataset.type);
-  });
-});
+function render() {
+  const root = document.getElementById('tree-root');
+  root.innerHTML = '';
+  
+  let lecs = currentInstructor === 'hesham' ? LECTURES_HESHAM : currentInstructor === 'youssef' ? LECTURES_YOUSSEF : [...LECTURES_HESHAM, ...LECTURES_YOUSSEF];
+  
+  // Filter by course for Hesham
+  if (currentInstructor === 'hesham') {
+    const lecNum = (l) => parseInt(l.id.replace('lec', ''));
+    lecs = lecs.filter(l => {
+      const num = lecNum(l);
+      return currentCourse === 1 ? num <= 14 : num > 14;
+    });
+  }
+  
+  if (currentMode === 'topic') {
+    const grouped = {};
+    lecs.forEach(l => {
+      if (!grouped[l.topicKey]) grouped[l.topicKey] = [];
+      grouped[l.topicKey].push(l);
+    });
+    const h = document.createElement('div');
+    h.className = 'section-header';
+    h.textContent = `TOPICS (${Object.keys(grouped).length})`;
+    root.appendChild(h);
+    const ul = document.createElement('ul');
+    ul.className = 'tree';
+    Object.keys(grouped).sort().forEach(key => {
+      const node = document.createElement('li');
+      node.className = 'tree-node';
+      const row = document.createElement('div');
+      row.className = 'node-row';
+      row.innerHTML = `<div class="toggle-icon"><svg viewBox="0 0 10 10"><polyline points="3,2 7,5 3,8"/></svg></div><div class="node-label"><span class="node-title">${key.replace(/_/g,' ').toUpperCase()}</span></div>`;
+      node.appendChild(row);
+      const wrap = document.createElement('div');
+      wrap.className = 'children-wrap';
+      const subl = document.createElement('ul');
+      subl.className = 'tree';
+      grouped[key].forEach(l => subl.appendChild(buildLecture(l)));
+      wrap.appendChild(subl);
+      node.appendChild(wrap);
+      row.addEventListener('click', () => {
+        row.classList.toggle('open');
+        wrap.classList.toggle('open');
+      });
+      ul.appendChild(node);
+    });
+    root.appendChild(ul);
+  } else {
+    const h = document.createElement('div');
+    h.className = 'section-header';
+    h.textContent = `LECTURES (${lecs.length})`;
+    root.appendChild(h);
+    const ul = document.createElement('ul');
+    ul.className = 'tree';
+    lecs.forEach(l => ul.appendChild(buildLecture(l)));
+    root.appendChild(ul);
+  }
+}
 
-// ═══════════════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════════════
-render('split');
+function buildLecture(l) {
+  const node = document.createElement('li');
+  node.className = 'tree-node';
+  const row = document.createElement('div');
+  row.className = 'node-row' + (l.videos.length === 0 ? ' leaf' : '');
+  row.innerHTML = `<div class="toggle-icon"><svg viewBox="0 0 10 10"><polyline points="3,2 7,5 3,8"/></svg></div><div class="node-label"><span class="node-title">${l.title}${l.sub ? '<span class="node-sub">' + l.sub + '</span>' : ''}</span></div>`;
+  const badges = document.createElement('div');
+  badges.className = 'badges';
+  if (l.slides) {
+    const sb = document.createElement('a');
+    sb.className = 'badge badge-slides';
+    sb.href = l.slides;
+    sb.target = '_blank';
+    sb.textContent = '◈ Slides';
+    badges.appendChild(sb);
+  }
+  if (currentMode === 'topic' && currentInstructor === 'all') {
+    const ib = document.createElement('span');
+    ib.className = 'badge badge-instructor';
+    ib.textContent = l.instructor === 'hesham' ? 'HESHAM' : 'YOUSSEF';
+    badges.appendChild(ib);
+  }
+  row.appendChild(badges);
+  node.appendChild(row);
+  
+  if (l.videos.length > 0) {
+    const wrap = document.createElement('div');
+    wrap.className = 'children-wrap';
+    const detail = document.createElement('div');
+    detail.className = 'node-detail';
+    const vlist = document.createElement('div');
+    vlist.className = 'videos-list';
+    l.videos.forEach(v => {
+      const vi = document.createElement('a');
+      vi.className = 'video-item';
+      vi.textContent = v.label;
+      if (v.href) { vi.href = v.href; vi.target = '_blank'; vi.rel = 'noopener'; } else { vi.style.opacity = '0.5'; vi.style.cursor = 'default'; }
+      vlist.appendChild(vi);
+    });
+    detail.appendChild(vlist);
+    wrap.appendChild(detail);
+    node.appendChild(wrap);
+    row.addEventListener('click', () => {
+      row.classList.toggle('open');
+      wrap.classList.toggle('open');
+      detail.classList.toggle('visible');
+    });
+  }
+  return node;
+}
+
+render();
 </script>
 </body>
 </html>
