@@ -179,7 +179,7 @@
 const SLIDES = 'https://drive.google.com/drive/folders/1OWcbg8f48_ilr8jptdFEA3nbNeQyD0Hi';
 
 const LECTURES_HESHAM = [
-  {id:'lec01',instructor:'hesham',topicKey:'intro',title:'Lecture 01: Introduction',videos:[{label:'Pt.1',href:'https://youtu.be/Ucgx0BM4vWo?si=-ccdEuztiCtrJsH8'},{label:'Pt.2',href:'https://youtu.be/Yh73WcV6Q3g?si=6LuEqGx59EtSUjeR'}],slides:SLIDES,labs:[{label:'Lab 01 (Part 1): Basic Simulations',href:'https://drive.google.com/file/d/1FAo3KbqsqRK1p54LpjCC_IsYeiku3pyO/view'}]},
+  {id:'lec01',instructor:'hesham',topicKey:'intro',title:'Lecture 01: Introduction',videos:[{label:'Pt.1',href:'https://youtu.be/Ucgx0BM4vWo?si=-ccdEuztiCtrJsH8'},{label:'Pt.2',href:'https://youtu.be/Yh73WcV6Q3g?si=6LuEqGx59EtSUjeR'}],slides:SLIDES,labs:[{label:'Lab 01 (Part 1): Basic Simulations',href:'https://drive.google.com/file/d/1FAo3KbqsqRK1p54LpjCC_IsYeiku3pyO/view',files:[{name:'Lab 01 PDF',href:'https://drive.google.com/file/d/1FAo3KbqsqRK1p54LpjCC_IsYeiku3pyO/view',type:'pdf'},{name:'ee214b.sp',href:'ee214b.sp',type:'spice'},{name:'SaveOP.scs',href:'SaveOP.scs',type:'spectre'}]}]},
   {id:'lec02',instructor:'hesham',topicKey:'circuits',title:'Lecture 02: Circuits & Systems',videos:[{label:'Pt.1',href:'https://youtu.be/lsItLA5LgDw?si=ILvR1lgzmPwmL7HE'},{label:'Pt.2',href:'https://youtu.be/s6-yGL-kmbE?si=EOgXXVr3RUjX0H9j'}],slides:SLIDES},
   {id:'lec03',instructor:'hesham',topicKey:'semiconductors',title:'Lecture 03: Semiconductors',videos:[{label:'Video',href:'https://youtu.be/7BhUJrTkziA?si=T4Dq-uJaoUN2XF0U'}],slides:SLIDES},
   {id:'lec04',instructor:'hesham',topicKey:'mosfet_large',title:'Lecture 04: MOSFET Large Signal',videos:[{label:'Pt.1',href:'https://youtu.be/SsDyOhxlKds?si=bMSZcNCVifU2Sh0S'},{label:'Pt.2',href:'https://youtu.be/-BeABAzN5lo?si=HxQkZ6OW0nz4YUfg'},{label:'Pt.3',href:'https://youtu.be/VXNCL9T6_Ig?si=idtrlFHks8yQGdqn'}],slides:SLIDES,labs:[{label:'Lab 01 (Part 2): MOSFET Characteristics',href:'https://drive.google.com/file/d/1rNrEmHf4pcL-3118wEzCEj8QTf8mB8ga/view'}]},
@@ -218,6 +218,19 @@ const LECTURES_YOUSSEF = [
 let currentInstructor = 'hesham';
 let currentMode = 'split';
 let currentCourse = 1;
+let slidesCache = {}; // Will store auto-fetched slide URLs
+
+// Fetch slides from Google Apps Script
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDy2AE2Rv1m8oYQkY-agKs6InVR5tJ2gE06mUhw3LHyFKqFgruq-04oYgSmuW7QXkilg/exec';
+
+fetch(SCRIPT_URL)
+  .then(r => r.json())
+  .then(data => {
+    slidesCache = data;
+    console.log('✓ Slides loaded:', Object.keys(data).length, 'lectures found');
+    render(); // Re-render with correct slide links
+  })
+  .catch(e => console.warn('Could not auto-fetch slides:', e));
 
 document.querySelectorAll('.instructor-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -361,10 +374,22 @@ function buildLecture(l) {
   }
   
   // Add slides badge LAST (right side, always on the right)
-  if (l.slides) {
+  // Try to use auto-fetched slide URL first, fallback to SLIDES constant
+  let slideUrl = l.slides;
+  if (l.instructor === 'hesham') {
+    const lecMatch = l.id.match(/lec(\d+)/);
+    if (lecMatch) {
+      const lecNum = parseInt(lecMatch[1]);
+      if (slidesCache[lecNum]) {
+        slideUrl = slidesCache[lecNum].url;
+      }
+    }
+  }
+  
+  if (slideUrl) {
     const sb = document.createElement('a');
     sb.className = 'badge badge-slides';
-    sb.href = l.slides;
+    sb.href = slideUrl;
     sb.target = '_blank';
     sb.textContent = '◈ Slides';
     badges.appendChild(sb);
@@ -419,6 +444,7 @@ function buildLecture(l) {
       llist.style.paddingTop = '10px';
       llist.style.borderTop = '1px solid var(--border)';
       l.labs.forEach(lab => {
+        // Main lab file
         const li = document.createElement('a');
         li.className = 'video-item';
         li.style.background = 'rgba(184,134,11,0.08)';
@@ -427,6 +453,22 @@ function buildLecture(l) {
         li.textContent = lab.label;
         if (lab.href) { li.href = lab.href; li.target = '_blank'; li.rel = 'noopener'; }
         llist.appendChild(li);
+        
+        // Additional files if they exist
+        if (lab.files && lab.files.length > 0) {
+          lab.files.forEach(f => {
+            const fi = document.createElement('a');
+            fi.className = 'video-item';
+            fi.style.background = 'rgba(184,134,11,0.05)';
+            fi.style.borderColor = 'rgba(184,134,11,0.15)';
+            fi.style.color = 'rgba(212,160,23,0.8)';
+            fi.style.fontSize = '0.85em';
+            fi.style.marginLeft = '12px';
+            fi.textContent = '↳ ' + f.name + ' [' + f.type.toUpperCase() + ']';
+            if (f.href) { fi.href = f.href; fi.target = '_blank'; fi.rel = 'noopener'; }
+            llist.appendChild(fi);
+          });
+        }
       });
       detail.appendChild(llist);
     }

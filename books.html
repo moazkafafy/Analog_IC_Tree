@@ -146,18 +146,6 @@
   /* ── TAB CONTENT ── */
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  @media (max-width: 700px) {
-    header { padding: 20px 16px 20px; }
-    .header-inner { padding: 0; }
-    header h1 { font-size: 1.2rem; }
-    header p { font-size: 0.7rem; }
-    .nav-links { gap: 8px; margin-top: 10px; }
-    .nav-link { font-size: 0.65rem; padding: 5px 8px; }
-    main { padding: 16px 12px 60px; }
-    .books-grid { grid-template-columns: 1fr; }
-    .tabs-bar { padding: 0 12px; }
-  }
-
 </style>
 </head>
 <body>
@@ -244,14 +232,6 @@ const BOOKS = {
     // BEGINNER
     {
       level: 'beginner',
-      title: 'Fundamentals of Microelectronics',
-      author: 'Behzad Razavi',
-      year: 2014,
-      description: 'Excellent introduction to semiconductor physics and basic circuit concepts. Perfect starting point with clear intuitive explanations and practical examples.',
-      link: 'razavi-fundamentals-2014.pdf',
-    },
-    {
-      level: 'beginner',
       title: 'CMOS Analog Circuit Design',
       author: 'Phillip E. Allen, Douglas R. Holberg',
       year: 2002,
@@ -267,14 +247,6 @@ const BOOKS = {
       link: null,
     },
     // INTERMEDIATE
-    {
-      level: 'intermediate',
-      title: 'Design of Analog CMOS Integrated Circuits',
-      author: 'Behzad Razavi',
-      year: 2017,
-      description: '2nd edition with updated content on modern design techniques, nanometer technology effects, and practical design challenges. Comprehensive reference for analog designers.',
-      link: 'razavi-design-cmos-2017.pdf',
-    },
     {
       level: 'intermediate',
       title: 'Analog Integrated Circuit Design',
@@ -323,11 +295,7 @@ function renderBooks(level, container) {
     return;
   }
 
-  grid.innerHTML = books.map(book => {
-    const linkHtml = book.link
-      ? '<a href="' + book.link + '" class="book-link" target="_blank" rel="noopener">Learn More →</a>'
-      : '<span style="font-size:0.7rem;color:var(--text-muted);">Link coming soon</span>';
-    return `
+  grid.innerHTML = books.map(book => `
     <div class="book-card">
       <div class="book-title">${book.title}</div>
       <div class="book-author">by ${book.author}</div>
@@ -335,10 +303,10 @@ function renderBooks(level, container) {
       <div class="book-description">${book.description}</div>
       <div class="book-footer">
         <span class="book-skill skill-${book.level}">${book.level.toUpperCase()}</span>
-        ${linkHtml}
+        ${book.link ? `<a href="${book.link}" class="book-link" target="_blank" rel="noopener">Learn More →</a>` : '<span style="font-size:0.7rem;color:var(--text-muted);">Link coming soon</span>'}
       </div>
-    </div>`;
-  }).join('');
+    </div>
+  `).join('');
 }
 
 function searchBooks(query) {
