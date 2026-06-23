@@ -335,6 +335,18 @@ function buildLecture(l) {
     badges.appendChild(ib);
   }
   row.appendChild(badges);
+  
+  // Add labs badge if lecture has labs
+  if (l.labs && l.labs.length > 0) {
+    const lb = document.createElement('span');
+    lb.className = 'badge badge-labs';
+    lb.style.background = 'rgba(184,134,11,0.15)';
+    lb.style.borderColor = 'var(--color-gold)';
+    lb.style.color = 'var(--color-gold)';
+    lb.textContent = '📄 Labs';
+    badges.appendChild(lb);
+  }
+  
   node.appendChild(row);
   
   if (l.videos.length > 0 || l.labs.length > 0) {
