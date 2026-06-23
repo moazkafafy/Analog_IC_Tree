@@ -1,19 +1,25 @@
 #!/bin/bash
 echo "🔄 Updating Analog IC Tree site..."
 
-# Find the NEWEST analog-ic-tree file (by modification time)
-LATEST_FILE=$(ls -t /c/Users/moazk/Downloads/analog-ic-tree*.html 2>/dev/null | head -1)
+# Find the NEWEST analog-ic-tree file
+LATEST_TREE=$(ls -t /c/Users/moazk/Downloads/analog-ic-tree*.html 2>/dev/null | head -1)
 
-if [ -n "$LATEST_FILE" ]; then
-  cp "$LATEST_FILE" ./index.html && echo "✓ Knowledge Tree updated (from: $(basename $LATEST_FILE))"
+if [ -n "$LATEST_TREE" ]; then
+  cp "$LATEST_TREE" ./index.html && echo "✓ Knowledge Tree updated (from: $(basename $LATEST_TREE))"
 else
   echo "✗ Could not find analog-ic-tree file"
 fi
 
-cp /c/Users/moazk/Downloads/books.html ./books.html && echo "✓ Books Library updated" || echo "✗ Could not find books.html"
+# Find the NEWEST books file
+LATEST_BOOKS=$(ls -t /c/Users/moazk/Downloads/books*.html 2>/dev/null | head -1)
 
-cp /c/Users/moazk/Downloads/razavi-fundamentals-2014.pdf ./ 2>/dev/null && echo "✓ Fundamentals PDF copied"
-cp /c/Users/moazk/Downloads/razavi-design-cmos-2017.pdf ./ 2>/dev/null && echo "✓ Design CMOS PDF copied"
+if [ -n "$LATEST_BOOKS" ]; then
+  cp "$LATEST_BOOKS" ./books.html && echo "✓ Books Library updated (from: $(basename $LATEST_BOOKS))"
+else
+  echo "✗ Could not find books file"
+fi
+
+cp /c/Users/moazk/Downloads/B.\ Razavi*.pdf ./ 2>/dev/null && echo "✓ PDFs copied"
 
 echo ""
 echo "✨ Done! Now run:"
