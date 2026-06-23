@@ -48,6 +48,21 @@
   header h1 { font-family: 'Courier New', monospace; font-size: 1.85rem; font-weight: 700; color: #fff; letter-spacing: 0.04em; }
   header h1 span { color: var(--color-gold); transition: color 0.3s; }
   header p { margin-top: 4px; font-size: 0.78rem; color: rgba(255,255,255,0.48); font-family: 'Courier New', monospace; letter-spacing: 0.06em; }
+
+  @media (max-width: 700px) {
+    header { padding: 20px 16px 20px; min-height: unset; contain: none; }
+    .header-inner { grid-template-columns: 1fr; gap: 16px 0; }
+    .header-right { width: 100%; }
+    .ctrl-btns.stacked { grid-template-columns: 1fr 1fr; }
+    .ctrl-btns.two-col { grid-template-columns: 1fr 1fr; }
+    header h1 { font-size: 1.2rem; }
+    header p { font-size: 0.7rem; }
+    .ctrl-btn { font-size: 0.65rem; padding: 6px 6px; }
+    .ctrl-label { font-size: 0.58rem; }
+    main { padding: 16px 12px 60px; }
+    .node-row { padding: 8px 10px 8px 8px; }
+    .node-title { font-size: 0.8rem; }
+  }
   .header-badges { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 12px; }
   .hbadge { background: rgba(255,255,255,0.1); border: 1px solid var(--color-gold); color: var(--color-gold); font-family: 'Courier New', monospace; font-size: 0.66rem; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 2px; transition: color 0.3s, border-color 0.3s; }
 
