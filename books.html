@@ -311,7 +311,11 @@ function renderBooks(level, container) {
     return;
   }
 
-  grid.innerHTML = books.map(book => `
+  grid.innerHTML = books.map(book => {
+    const linkHtml = book.link
+      ? '<a href="' + book.link + '" class="book-link" target="_blank" rel="noopener">Learn More →</a>'
+      : '<span style="font-size:0.7rem;color:var(--text-muted);">Link coming soon</span>';
+    return `
     <div class="book-card">
       <div class="book-title">${book.title}</div>
       <div class="book-author">by ${book.author}</div>
@@ -319,10 +323,10 @@ function renderBooks(level, container) {
       <div class="book-description">${book.description}</div>
       <div class="book-footer">
         <span class="book-skill skill-${book.level}">${book.level.toUpperCase()}</span>
-        ${book.link ? `<a href="${book.link}" class="book-link" target="_blank" rel="noopener">Learn More →</a>` : '<span style="font-size:0.7rem;color:var(--text-muted);">Link coming soon</span>'}
+        ${linkHtml}
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function searchBooks(query) {
