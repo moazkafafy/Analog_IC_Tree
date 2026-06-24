@@ -1,0 +1,10 @@
+save *:gm sigtype=dev
+save *:oppoint sigtype=dev
+save *:gds sigtype=dev
+save *:id sigtype=dev
+save *:cgg sigtype=dev
+save *:cgs sigtype=dev
+save *:gmoverid sigtype=dev
+save *:vgs sigtype=dev
+save *:vth sigtype=dev
+save *:vdsat sigtype=dev
