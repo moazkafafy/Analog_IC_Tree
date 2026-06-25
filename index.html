@@ -400,9 +400,10 @@ function buildLecture(l) {
   // Add slides badge LAST (right side, always on the right)
   // Try to use auto-fetched slide URL first, fallback to SLIDES constant
   let slideUrl = l.slides;
+  let isYoussefIndicator = false;
   
   if (l.instructor === 'hesham') {
-    // For Hesham: match by lecture number
+    // For Hesham: match by lecture number, badge is clickable
     const lecMatch = l.id.match(/lec(\d+)/);
     if (lecMatch) {
       const lecNum = parseInt(lecMatch[1]);
@@ -411,18 +412,24 @@ function buildLecture(l) {
       }
     }
   } else if (l.instructor === 'youssef') {
-    // For Youssef: use slidesKey, point to first available part
+    // For Youssef: badge is just an INDICATOR (no link) - actual slides are inline per part
     const sKey = l.slidesKey || l.topicKey;
-    if (youssefSlidesCache[sKey] && youssefSlidesCache[sKey]['1']) {
-      slideUrl = youssefSlidesCache[sKey]['1'].url;
+    if (youssefSlidesCache[sKey] && Object.keys(youssefSlidesCache[sKey]).length > 0) {
+      isYoussefIndicator = true;
     }
+    slideUrl = null; // Don't link the header badge for Youssef
   }
   
-  if (slideUrl) {
-    const sb = document.createElement('a');
+  if (slideUrl || isYoussefIndicator) {
+    const sb = document.createElement(isYoussefIndicator ? 'span' : 'a');
     sb.className = 'badge badge-slides';
-    sb.href = slideUrl;
-    sb.target = '_blank';
+    if (!isYoussefIndicator) {
+      sb.href = slideUrl;
+      sb.target = '_blank';
+    } else {
+      sb.style.cursor = 'default';
+      sb.style.opacity = '0.85';
+    }
     sb.textContent = '◈ Slides';
     badges.appendChild(sb);
   }
