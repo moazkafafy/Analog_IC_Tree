@@ -451,27 +451,94 @@ function buildLecture(l) {
     const detail = document.createElement('div');
     detail.className = 'node-detail';
     
+    // HESHAM: Slides as FIRST item in dropdown (cyan/blue color)
+    if (l.instructor === 'hesham') {
+      let slideUrl = l.slides;
+      const lecMatch = l.id.match(/lec(\d+)/);
+      if (lecMatch) {
+        const lecNum = parseInt(lecMatch[1]);
+        if (slidesCache[lecNum]) {
+          slideUrl = slidesCache[lecNum].url;
+        }
+      }
+      
+      if (slideUrl) {
+        const slideItem = document.createElement('a');
+        slideItem.className = 'video-item';
+        slideItem.style.background = 'rgba(0,150,255,0.1)';
+        slideItem.style.borderColor = 'rgba(0,150,255,0.3)';
+        slideItem.style.color = '#0099ff';
+        slideItem.style.fontWeight = '700';
+        slideItem.textContent = '📄 Lecture Slides';
+        slideItem.href = slideUrl;
+        slideItem.target = '_blank';
+        slideItem.rel = 'noopener';
+        detail.appendChild(slideItem);
+      }
+    }
+    
     // Videos
     if (l.videos.length > 0) {
       const vlist = document.createElement('div');
       vlist.className = 'videos-list';
+      
+      // Add margin if Hesham (to separate from slides above)
+      if (l.instructor === 'hesham') {
+        vlist.style.marginTop = '8px';
+        vlist.style.paddingTop = '8px';
+        vlist.style.borderTop = '1px solid rgba(0,150,255,0.15)';
+      }
+      
       l.videos.forEach((v, idx) => {
+        const row_container = document.createElement('div');
+        row_container.style.display = 'flex';
+        row_container.style.gap = '8px';
+        row_container.style.marginBottom = '6px';
+        row_container.style.alignItems = 'center';
+        
         const vi = document.createElement('a');
         vi.className = 'video-item';
+        vi.style.flex = '1';
         
         // For Hesham lectures, fetch YouTube title; for Youssef, use label
         if (l.instructor === 'hesham' && v.href) {
           vi.textContent = '⏳ Loading...';
           getYouTubeTitle(v.href).then(title => {
             if (title) vi.textContent = title;
-            else vi.textContent = v.label; // fallback to label
+            else vi.textContent = v.label;
           });
         } else {
           vi.textContent = v.label;
         }
         
         if (v.href) { vi.href = v.href; vi.target = '_blank'; vi.rel = 'noopener'; } else { vi.style.opacity = '0.5'; vi.style.cursor = 'default'; }
-        vlist.appendChild(vi);
+        row_container.appendChild(vi);
+        
+        // YOUSSEF: Slides badge next to each video part on the SAME row
+        if (l.instructor === 'youssef') {
+          const lecNumbers = YOUSSEF_LECTURE_MAPPING[l.id];
+          if (lecNumbers && youssefSlidesCache[lecNumbers[0]]) {
+            const slidesBadge = document.createElement('a');
+            slidesBadge.style.background = 'rgba(0,150,255,0.1)';
+            slidesBadge.style.borderColor = 'rgba(0,150,255,0.3)';
+            slidesBadge.style.color = '#0099ff';
+            slidesBadge.style.padding = '4px 10px';
+            slidesBadge.style.borderRadius = '3px';
+            slidesBadge.style.fontSize = '0.7rem';
+            slidesBadge.style.fontWeight = '700';
+            slidesBadge.style.whiteSpace = 'nowrap';
+            slidesBadge.style.border = '1px solid rgba(0,150,255,0.3)';
+            slidesBadge.style.textDecoration = 'none';
+            slidesBadge.style.flexShrink = '0';
+            slidesBadge.textContent = '📄 Slides';
+            slidesBadge.href = youssefSlidesCache[lecNumbers[0]].url;
+            slidesBadge.target = '_blank';
+            slidesBadge.rel = 'noopener';
+            row_container.appendChild(slidesBadge);
+          }
+        }
+        
+        vlist.appendChild(row_container);
       });
       detail.appendChild(vlist);
     }
