@@ -207,10 +207,19 @@ const LECTURES_HESHAM = [
 
 const LABS_HESHAM = [];
 
+// Generic lecture order for Youssef - change this to reorder all lectures
+const LECTURES_YOUSSEF_ORDER = [
+  {id: 'y_cm', topicKey: 'current_mirrors', name: 'Current Mirrors'},
+  {id: 'y_diff5t', topicKey: 'diff_amp', name: 'Differential Amplifier & 5T OTA'},
+  {id: 'y_freq', topicKey: 'freq_resp', name: 'Frequency Response'},
+  {id: 'y_negfb', topicKey: 'feedback', name: 'Negative Feedback'},
+  {id: 'y_osc', topicKey: 'oscillators', name: 'Oscillators'}
+];
+
 const LECTURES_YOUSSEF = [
+  {id:'y_cm',instructor:'youssef',topicKey:'current_mirrors',title:'Current Mirrors',videos:[{label:'Part 1',href:'https://youtu.be/tPsGZEvHf4U?si=cj4Z29dKWA5OJVQ9'},{label:'Part 2',href:'https://youtu.be/1Yy62cxH0to?si=mwtd47vBktyASWi4'}],slides:null},
   {id:'y_diff5t',instructor:'youssef',topicKey:'diff_amp',title:'Differential Amplifier & 5T OTA',videos:[{label:'Part 1',href:'https://youtu.be/DiqeyeDK7Kw?si=B2RV2VXbc6vSoiSI'},{label:'Part 2',href:'https://youtu.be/5lTEbmP6ojE?si=lhBKKL-OdU_8FlA1'},{label:'Part 3',href:'https://youtu.be/UW4CkRrBRyk?si=B2RV2VXbc6vSoiSI'},{label:'Part 4 (till 35:40)',href:'https://youtu.be/YNLfrxUCHaA?si=o-vCeDHMG-lpN4kj'}],slides:null},
   {id:'y_freq',instructor:'youssef',topicKey:'freq_resp',title:'Frequency Response',videos:[{label:'Part 1',href:'https://youtu.be/iJr7uilpSk8?si=CX868dARlFlm6dz7'},{label:'Part 2',href:'https://youtu.be/yDZpNx7dpCk?si=lhBKKL-OdU_8FlA1'},{label:'Part 3',href:'https://youtu.be/mWG8aXcP6x0?si=B2RV2VXbc6vSoiSI'},{label:'Part 4',href:'https://youtu.be/EVDZfyxgFiY?si=gA8bUpyBLG5AumOV'},{label:'Part 5',href:'https://youtu.be/I1jP8KCZUKA?si=gA8bUpyBLG5AumOV'},{label:'Part 6',href:'https://youtu.be/_AgVLosYig8?si=AEp1hjx5IRbQfqGs'}],slides:null},
-  {id:'y_cm',instructor:'youssef',topicKey:'current_mirrors',title:'Current Mirrors',videos:[{label:'Part 1',href:'https://youtu.be/tPsGZEvHf4U?si=cj4Z29dKWA5OJVQ9'},{label:'Part 2',href:'https://youtu.be/1Yy62cxH0to?si=mwtd47vBktyASWi4'}],slides:null},
   {id:'y_negfb',instructor:'youssef',topicKey:'feedback',title:'Negative Feedback',videos:[{label:'Part 1',href:'https://youtu.be/esZCiz3vpUM?si=2ik7h13VNQFVtdWF'},{label:'Part 2',href:'https://youtu.be/qOj-FbKHgAQ?si=zFmcRgzkiVdL7GvU'},{label:'Part 3 (till 18:05)',href:'https://youtu.be/H4eeEm38hOY?si=z1P45c8PVNLxhSjI'}],slides:null},
   {id:'y_osc',instructor:'youssef',topicKey:'oscillators',title:'Oscillators',videos:[{label:'Part 1',href:'https://youtu.be/qOj-FbKHgAQ?si=L_uEbv5hEQJwMxff&t=1085'},{label:'Part 2',href:'https://youtu.be/Cgie-e6dXus?si=URCaKcJQ03h1SD2z'}],slides:null},
 ];
@@ -218,19 +227,42 @@ const LECTURES_YOUSSEF = [
 let currentInstructor = 'hesham';
 let currentMode = 'split';
 let currentCourse = 1;
-let slidesCache = {}; // Will store auto-fetched slide URLs
+let slidesCache = {}; // For Hesham slides
+let youssefSlidesCache = {}; // For Youssef slides
 
-// Fetch slides from Google Apps Script
+// Hesham slides - Google Apps Script
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDy2AE2Rv1m8oYQkY-agKs6InVR5tJ2gE06mUhw3LHyFKqFgruq-04oYgSmuW7QXkilg/exec';
 
+// Youssef slides - Google Apps Script
+const YOUSSEF_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWDaGQCw9gGaZn0hLDCR6KTTUOJWIS93NMrOzQLnv7Y-Az7_jbqibuExkUZLP2XJ6TUw/exec';
+
+// Build Youssef lecture mapping AUTOMATICALLY from order
+const YOUSSEF_LECTURE_MAPPING = {};
+LECTURES_YOUSSEF_ORDER.forEach((lecture, index) => {
+  const lecNum = index + 2;  // Start from 2 (Lec 2.x)
+  YOUSSEF_LECTURE_MAPPING[lecture.id] = [String(lecNum)];
+});
+console.log('Youssef lecture mapping:', YOUSSEF_LECTURE_MAPPING);
+
+// Fetch Hesham slides
 fetch(SCRIPT_URL)
   .then(r => r.json())
   .then(data => {
     slidesCache = data;
-    console.log('✓ Slides loaded:', Object.keys(data).length, 'lectures found');
+    console.log('✓ Hesham slides loaded:', Object.keys(data).length, 'lectures found');
     render(); // Re-render with correct slide links
   })
-  .catch(e => console.warn('Could not auto-fetch slides:', e));
+  .catch(e => console.warn('Could not auto-fetch Hesham slides:', e));
+
+// Fetch Youssef slides
+fetch(YOUSSEF_SCRIPT_URL)
+  .then(r => r.json())
+  .then(data => {
+    youssefSlidesCache = data;
+    console.log('✓ Youssef slides loaded:', Object.keys(data).length, 'files found');
+    render(); // Re-render with correct slide links
+  })
+  .catch(e => console.warn('Could not auto-fetch Youssef slides:', e));
 
 document.querySelectorAll('.instructor-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -376,13 +408,21 @@ function buildLecture(l) {
   // Add slides badge LAST (right side, always on the right)
   // Try to use auto-fetched slide URL first, fallback to SLIDES constant
   let slideUrl = l.slides;
+  
   if (l.instructor === 'hesham') {
+    // For Hesham: match by lecture number
     const lecMatch = l.id.match(/lec(\d+)/);
     if (lecMatch) {
       const lecNum = parseInt(lecMatch[1]);
       if (slidesCache[lecNum]) {
         slideUrl = slidesCache[lecNum].url;
       }
+    }
+  } else if (l.instructor === 'youssef') {
+    // For Youssef: use the mapping to find which lec number this lecture uses
+    const lecNumbers = YOUSSEF_LECTURE_MAPPING[l.id];
+    if (lecNumbers && youssefSlidesCache[lecNumbers[0]]) {
+      slideUrl = youssefSlidesCache[lecNumbers[0]].url;
     }
   }
   
